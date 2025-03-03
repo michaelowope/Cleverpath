@@ -1,15 +1,20 @@
+import React from "react";
 import { Button } from "./ui/button";
 
 interface AppButtonProps {
   title: string;
   className?: string;
   onClick?: () => void;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 export default function AppButton({
   title,
   className,
   onClick,
+  leftIcon,
+  rightIcon,
 }: AppButtonProps) {
   function handleClick() {
     if (onClick) {
@@ -20,9 +25,11 @@ export default function AppButton({
   return (
     <Button
       onClick={handleClick}
-      className={`${className || ""} bg-white text-blue-900 hover:text-blue-950 border border-blue-900 px-4 py-2 cursor-pointer hover:bg-white rounded-md shadow outline-none capitalize font-bold`}
+      className={`${className || ""} flex items-center gap-2 bg-white text-blue-900 hover:text-blue-950 border border-blue-900 px-4 py-2 cursor-pointer hover:bg-white rounded-md shadow outline-none capitalize font-bold`}
     >
-      {title}
+      {leftIcon && <span>{leftIcon}</span>}
+      <h1>{title}</h1>
+      {rightIcon && <span>{rightIcon}</span>}
     </Button>
   );
 }
