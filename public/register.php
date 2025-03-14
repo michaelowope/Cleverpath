@@ -30,7 +30,7 @@ if(isset($_POST['submit'])){
    $rename = unique_id().'.'.$ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = 'uploaded_files/'.$rename;
+   $image_folder = 'uploads/'.$rename;
 
    $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
    $select_user->execute([$email]);
@@ -108,11 +108,9 @@ if(isset($_POST['submit'])){
                <option value="300">300 level</option>
                <option value="400">400 level</option>
             </select>
-         </div>
-         <div class="col">
             <p>Course <span>*</span></p>
             <select name='course' class='box' required>
-            <option value="" disabled selected>-- Select your Course</option>
+               <option value="" disabled selected>-- Select your Course</option>
                <option value="Computer Science">Computer Science</option>
                <option value="Computer Information Systems">Computer Information Systems</option>
                <option value="Computer Technology">Computer Technology</option>

@@ -18,7 +18,7 @@ $select_pdf->execute([$pdf_id]);
 if ($select_pdf->rowCount() > 0) {
     $fetch_pdf = $select_pdf->fetch(PDO::FETCH_ASSOC);
     $pdfFile = $fetch_pdf['file'];
-    $pdfPath = realpath("uploaded_files/" . $pdfFile); // Ensure absolute path
+    $pdfPath = realpath("uploads/" . $pdfFile); // Ensure absolute path
 } else {
     die("PDF not found in the database.");
 }

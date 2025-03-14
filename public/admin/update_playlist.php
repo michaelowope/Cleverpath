@@ -36,7 +36,7 @@ if(isset($_POST['submit'])){
    $rename = unique_id().'.'.$ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = '../uploaded_files/'.$rename;
+   $image_folder = '../uploads/'.$rename;
 
    if(!empty($image)){
       if($image_size > 2000000){
@@ -46,7 +46,7 @@ if(isset($_POST['submit'])){
          $update_image->execute([$rename, $get_id]);
          move_uploaded_file($image_tmp_name, $image_folder);
          if($old_image != '' AND $old_image != $rename){
-            unlink('../uploaded_files/'.$old_image);
+            unlink('../uploads/'.$old_image);
          }
       }
    } 
@@ -61,7 +61,7 @@ if(isset($_POST['delete'])){
    $delete_playlist_thumb = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? LIMIT 1");
    $delete_playlist_thumb->execute([$delete_id]);
    $fetch_thumb = $delete_playlist_thumb->fetch(PDO::FETCH_ASSOC);
-   unlink('../uploaded_files/'.$fetch_thumb['thumb']);
+   unlink('../uploads/'.$fetch_thumb['thumb']);
    $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
    $delete_bookmark->execute([$delete_id]);
    $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
@@ -119,7 +119,7 @@ if(isset($_POST['delete'])){
       <p>playlist thumbnail <span>*</span></p>
       <div class="thumb">
          <span><?= $total_videos; ?></span>
-         <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
+         <img src="../uploads/<?= $fetch_playlist['thumb']; ?>" alt="">
       </div>
       <input type="file" name="image" accept="image/*" class="box">
       <input type="submit" value="update playlist" name="submit" class="btn">

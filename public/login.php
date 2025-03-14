@@ -21,7 +21,7 @@ if(isset($_POST['submit'])){
    
    if($select_user->rowCount() > 0){
      setcookie('user_id', $row['id'], time() + 60*60*24*30, '/');
-     header('location:home.php');
+     header('location:index.php');
    }else{
       $message[] = 'incorrect email or password!';
    }

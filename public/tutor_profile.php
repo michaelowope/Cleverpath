@@ -68,7 +68,7 @@ if(isset($_POST['tutor_fetch'])){
 
    <div class="details">
       <div class="tutor">
-         <img src="uploaded_files/<?= $fetch_tutor['image']; ?>" alt="">
+         <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
          <h3><?= $fetch_tutor['name']; ?></h3>
          <span><?= $fetch_tutor['department']; ?></span>
       </div>
@@ -103,13 +103,13 @@ if(isset($_POST['tutor_fetch'])){
       ?>
       <div class="box">
          <div class="tutor">
-            <img src="uploaded_files/<?= $fetch_tutor['image']; ?>" alt="">
+            <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
             <div>
                <h3><?= $fetch_tutor['name']; ?></h3>
                <span><?= $fetch_course['date']; ?></span>
             </div>
          </div>
-         <img src="uploaded_files/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
+         <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
          <?php if($user_id != ''){ ?>
             <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">view playlist</a>

@@ -27,7 +27,7 @@ if(isset($_POST['delete_playlist'])){
    $fetch_thumb = $delete_playlist_thumb->fetch(PDO::FETCH_ASSOC);
    
    if(!empty($fetch_thumb['thumb'])){
-      unlink('../uploaded_files/'.$fetch_thumb['thumb']);
+      unlink('../uploads/'.$fetch_thumb['thumb']);
    }
 
    $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
@@ -49,7 +49,7 @@ if(isset($_POST['delete_video'])){
 
    if($verify_video->rowCount() > 0){
       $fetch_video = $verify_video->fetch(PDO::FETCH_ASSOC);
-      $file_path = '../uploaded_files/'.$fetch_video['file'];
+      $file_path = '../uploads/'.$fetch_video['file'];
 
       if(file_exists($file_path)){
          unlink($file_path);
@@ -104,7 +104,7 @@ if(isset($_POST['delete_video'])){
    <div class="row">
       <div class="thumb">
          <span><?= $total_videos; ?></span>
-         <img src="../uploaded_files/<?= $playlist_thumb; ?>" alt="Playlist Thumbnail">
+         <img src="../uploads/<?= $playlist_thumb; ?>" alt="Playlist Thumbnail">
       </div>
       <div class="details">
          <h3 class="title"><?= $fetch_playlist['title']; ?></h3>
@@ -150,10 +150,10 @@ if(isset($_POST['delete_video'])){
 
          <div class="thumb">
             <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
-               <video src="../uploaded_files/<?= $file_name; ?>" class="thumb" controls></video>
+               <video src="../uploads/<?= $file_name; ?>" class="thumb" controls></video>
             <?php elseif($file_ext === 'pdf'): ?>
-               <a href="../uploaded_files/<?= $file_name; ?>" target="_blank">
-                  <img src="../uploaded_files/<?= $playlist_thumb; ?>" class="thumb" alt="PDF File">
+               <a href="../uploads/<?= $file_name; ?>" target="_blank">
+                  <img src="../uploads/<?= $playlist_thumb; ?>" class="thumb" alt="PDF File">
                </a>
             <?php endif; ?>
          </div>

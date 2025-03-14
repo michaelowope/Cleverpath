@@ -15,7 +15,7 @@ if (isset($message) && is_array($message)) {
 
    <section class="flex">
 
-      <a href="home.php" class="logo"><img src="assets/images/full-logo-black.svg" alt="Logo"></a>
+      <a href="home.php" class="logo"><img src="/images/full-logo-black.svg" alt="Logo"></a>
 
       <form action="search_course.php" method="post" class="search-form">
          <input type="text" name="search_course" placeholder="search courses..." required maxlength="100">
@@ -38,7 +38,7 @@ if (isset($message) && is_array($message)) {
                if ($select_profile->rowCount() > 0) {
                   $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
          ?>
-         <img src="uploaded_files/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
+         <img src="uploads/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
          <h3><?= htmlspecialchars($fetch_profile['name']); ?></h3>
          <span>student</span>
          <a href="profile.php" class="btn">View Profile</a>
@@ -83,7 +83,7 @@ if (isset($message) && is_array($message)) {
                if ($select_profile->rowCount() > 0) {
                   $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
          ?>
-         <img src="uploaded_files/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
+         <img src="uploads/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
          <h3><?= htmlspecialchars($fetch_profile['name']); ?></h3>
          <span>Student</span>
          <a href="profile.php" class="btn">View Profile</a>

@@ -56,7 +56,7 @@ if(isset($_POST['update'])){
       if(in_array($file_ext, $allowed_ext)){
          $rename_file = uniqid().'.'.$file_ext;
          $file_tmp_name = $_FILES['file']['tmp_name'];
-         $file_folder = '../uploaded_files/'.$rename_file;
+         $file_folder = '../uploads/'.$rename_file;
 
          // Update the file path in database
          $update_file = $conn->prepare("UPDATE `content` SET file = ? WHERE id = ?");
@@ -66,7 +66,7 @@ if(isset($_POST['update'])){
 
          // Remove old file only if different from the new file
          if(!empty($old_file) && $old_file != $rename_file){
-            unlink('../uploaded_files/'.$old_file);
+            unlink('../uploads/'.$old_file);
          }
       } else {
          $message[] = "Invalid file type! Only MP4, AVI, MOV, and PDF are allowed.";
@@ -88,7 +88,7 @@ if(isset($_POST['delete_file'])){
       $fetch_file = $delete_file_query->fetch(PDO::FETCH_ASSOC);
 
       if($fetch_file && !empty($fetch_file['file'])){
-         unlink('../uploaded_files/'.$fetch_file['file']);
+         unlink('../uploads/'.$fetch_file['file']);
       }
 
       // Delete related records

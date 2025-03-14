@@ -28,7 +28,7 @@ if(isset($_POST['submit'])){
    $file_ext = pathinfo($file, PATHINFO_EXTENSION);
    $rename_file = unique_id().'.'.$file_ext;
    $file_tmp_name = $_FILES['file']['tmp_name'];
-   $file_folder = '../uploaded_files/'.$rename_file;
+   $file_folder = '../uploads/'.$rename_file;
 
    $add_playlist = $conn->prepare("INSERT INTO `content`(id, tutor_id, playlist_id, title, description, file, status, level) VALUES(?,?,?,?,?,?,?,?)");
    $add_playlist->execute([$id, $tutor_id, $playlist, $title, $description, $rename_file, $status, $level]);

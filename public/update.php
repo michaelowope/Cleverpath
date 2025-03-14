@@ -51,7 +51,7 @@ if (isset($_POST['submit'])) {
       $rename = uniqid() . '.' . $ext;
       $image_size = $_FILES['image']['size'];
       $image_tmp_name = $_FILES['image']['tmp_name'];
-      $image_folder = 'uploaded_files/' . $rename;
+      $image_folder = 'uploads/' . $rename;
 
       if ($image_size > 2000000) {
          $message[] = 'Image size too large!';
@@ -61,8 +61,8 @@ if (isset($_POST['submit'])) {
          $update_image->execute([$rename, $user_id]);
 
          // Delete old image if exists
-         if (!empty($prev_image) && file_exists('uploaded_files/' . $prev_image) && $prev_image !== $rename) {
-            unlink('uploaded_files/' . $prev_image);
+         if (!empty($prev_image) && file_exists('uploads/' . $prev_image) && $prev_image !== $rename) {
+            unlink('uploads/' . $prev_image);
          }
 
          $message[] = 'Profile image updated successfully!';

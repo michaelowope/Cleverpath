@@ -52,7 +52,7 @@
 
    <div class="details">
       <div class="tutor">
-         <img src="../uploaded_files/<?= $fetch_profile['image']; ?>" alt="">
+         <img src="../uploads/<?= $fetch_profile['image']; ?>" alt="">
          <h3><?= $fetch_profile['name']; ?></h3>
          <span><?= $fetch_profile['department']; ?></span>
          <a href="update.php" class="inline-btn">update profile</a>

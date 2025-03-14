@@ -95,13 +95,13 @@ if(isset($_POST['save_list'])){
          </form>
          <div class="thumb">
             <span><?= $total_videos; ?> File<?= $total_videos > 1 ? 's': ''; ?></span>
-            <img src="uploaded_files/<?= $playlist_thumb; ?>" alt="Playlist Thumbnail">
+            <img src="uploads/<?= $playlist_thumb; ?>" alt="Playlist Thumbnail">
          </div>
       </div>
 
       <div class="col">
          <div class="tutor">
-            <img src="uploaded_files/<?= $fetch_tutor['image']; ?>" alt="">
+            <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
             <div>
                <h3><?= $fetch_tutor['name']; ?></h3>
                <span><?= $fetch_tutor['department']; ?></span>
@@ -140,9 +140,9 @@ if(isset($_POST['save_list'])){
          <i class="fas fa-play"></i>
          <div class="thumb">
             <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
-               <video src="uploaded_files/<?= $file_name; ?>" class="thumb" controls></video>
+               <video src="uploads/<?= $file_name; ?>" class="thumb" controls></video>
             <?php elseif($file_ext === 'pdf'): ?>
-               <img src="uploaded_files/<?= $playlist_thumb; ?>" class="thumb" alt="PDF File">
+               <img src="uploads/<?= $playlist_thumb; ?>" class="thumb" alt="PDF File">
                <div class="pdf-overlay">
                   <i class="fas fa-file-pdf"></i>
                </div>

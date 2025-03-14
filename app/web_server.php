@@ -2,7 +2,7 @@
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 class ChatServer implements MessageComponentInterface {
     protected $clients;
@@ -13,12 +13,13 @@ class ChatServer implements MessageComponentInterface {
 
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
-        echo "New connection ({$conn->resourceId})\n";
+        echo "New connection: ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $data = json_decode($msg, true);
-        if ($data['type'] === 'chat') {
+
+        if ($data && isset($data['type']) && $data['type'] === 'chat') {
             foreach ($this->clients as $client) {
                 if ($client !== $from) {
                     $client->send(json_encode([
@@ -43,14 +44,18 @@ class ChatServer implements MessageComponentInterface {
     }
 }
 
-// Start WebSocket server
-$server = \Ratchet\Server\IoServer::factory(
-    new \Ratchet\Http\HttpServer(
-        new \Ratchet\WebSocket\WsServer(
+use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
+
+$server = IoServer::factory(
+    new HttpServer(
+        new WsServer(
             new ChatServer()
         )
     ),
     8080 // WebSocket port
 );
 
+echo "WebSocket server started on ws://localhost:8080\n";
 $server->run();

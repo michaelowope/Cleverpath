@@ -23,7 +23,6 @@ if (!$friend) {
     header('location:chat.php');
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +70,7 @@ if (!$friend) {
             display: flex;
             flex-direction: column;
         }
-        .message {
+        .message-pvp {
             max-width: 80%;
             padding: 0.65rem 0.8rem;
             margin: 5px 0;
@@ -126,35 +125,13 @@ if (!$friend) {
         .chat-input button:hover {
             background: #363b96;
         }
-        .file-preview {
-            display: flex;
-            align-items: center;
-            padding: 5px;
-            background: #eee;
-            border-radius: 5px;
-            display: none;
-        }
-        .file-preview img {
-            max-width: 50px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .file-preview span {
-            font-size: 14px;
-            color: #333;
-        }
-        .file-preview .remove-file {
-            margin-left: 10px;
-            cursor: pointer;
-            color: red;
-        }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
     <div class="chat-header">
-        <img src="uploaded_files/<?= $friend['image']; ?>" alt="Friend">
+        <img src="uploads/<?= $friend['image']; ?>" alt="Friend">
         <h2><?= htmlspecialchars($friend['name']); ?></h2>
     </div>
 
@@ -163,8 +140,8 @@ if (!$friend) {
     </div>
 
     <form id="chat-form" class="chat-input">
-        <input type="hidden" id="sender_id" value="<?= $user_id; ?>">
-        <input type="hidden" id="receiver_id" value="<?= $friend_id; ?>">
+        <input type="hidden" name="sender_id" id="sender_id" value="<?= htmlspecialchars($user_id); ?>">
+        <input type="hidden" name="receiver_id" id="receiver_id" value="<?= htmlspecialchars($friend_id); ?>">
         <input type="text" id="message" placeholder="Type a message...">
         <label for="file-input"><i class="fas fa-paperclip"></i></label>
         <input type="file" id="file-input">
@@ -177,23 +154,71 @@ if (!$friend) {
 
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
+        displayMessage(data.sender_id, data.message, data.file);
+    };
+
+    function displayMessage(senderId, message, file) {
         const chatMessages = document.getElementById("chat-messages");
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", data.sender_id == <?= $user_id; ?> ? "sent" : "received");
-        messageDiv.innerHTML = `<p>${data.message}</p>`;
+        messageDiv.classList.add("message-pvp", senderId == <?= json_encode($user_id); ?> ? "sent" : "received");
+        
+        // Display message text
+        if (message) {
+            messageDiv.innerHTML += `<span>${message}</span>`;
+        }
+
+        // Display file if exists
+        if (file) {
+            let filePreview = document.createElement("a");
+            filePreview.href = "/uploads/" + file;
+            filePreview.target = "_blank";
+            filePreview.innerText = "📁 View File";
+            filePreview.style.display = "block";
+            messageDiv.appendChild(filePreview);
+        }
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-    };
+    }
 
     document.getElementById("chat-form").addEventListener("submit", function(e) {
         e.preventDefault();
         const sender_id = document.getElementById("sender_id").value;
         const receiver_id = document.getElementById("receiver_id").value;
-        const message = document.getElementById("message").value;
+        const message = document.getElementById("message").value.trim();
+        const fileInput = document.getElementById("file-input");
 
-        if (message.trim() !== "") {
-            ws.send(JSON.stringify({ type: "chat", sender_id, receiver_id, message }));
+        // Ensure message or file exists
+        if (message !== "" || fileInput.files.length > 0) {
+            let fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "";
+
+            // Send WebSocket message (for real-time update)
+            const messageData = { type: "chat", sender_id, receiver_id, message, file: fileName };
+            ws.send(JSON.stringify(messageData));
+
+            // Instantly show message for sender
+            displayMessage(sender_id, message, fileName);
+
+            // Send message to `send_message.php` via AJAX (to save in DB)
+            let formData = new FormData();
+            formData.append("sender_id", sender_id);
+            formData.append("receiver_id", receiver_id);
+            formData.append("message", message);
+            if (fileInput.files.length > 0) {
+                formData.append("file", fileInput.files[0]);
+            }
+
+            fetch("send_message.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => console.log("Message saved: " + result))
+            .catch(error => console.error("Error saving message:", error));
+
+            // Reset input fields
             document.getElementById("message").value = "";
+            fileInput.value = "";
         }
     });
 </script>

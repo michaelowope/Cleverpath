@@ -28,7 +28,7 @@ if(isset($_POST['delete_video'])){
    $fetch_file = $delete_file->fetch(PDO::FETCH_ASSOC);
 
    if($fetch_file && !empty($fetch_file['file'])){
-      $file_path = '../uploaded_files/'.$fetch_file['file'];
+      $file_path = '../uploads/'.$fetch_file['file'];
       if(file_exists($file_path)){
          unlink($file_path);
       }
@@ -102,9 +102,9 @@ if(isset($_POST['delete_comment'])){
    ?>
    <div class="container">
       <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
-         <video src="../uploaded_files/<?= $file_name; ?>" autoplay controls class="video"></video>
+         <video src="../uploads/<?= $file_name; ?>" autoplay controls class="video"></video>
       <?php elseif($file_ext === 'pdf'): ?>
-         <iframe src="../uploaded_files/<?= $file_name; ?>" width="100%" height="600px"></iframe>
+         <iframe src="../uploads/<?= $file_name; ?>" width="100%" height="600px"></iframe>
       <?php endif; ?>
 
       <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_content['date']; ?></span></div>
@@ -145,7 +145,7 @@ if(isset($_POST['delete_comment'])){
       ?>
       <div class="box">
          <div class="user">
-            <img src="../uploaded_files/<?= $fetch_commentor['image']; ?>" alt="">
+            <img src="../uploads/<?= $fetch_commentor['image']; ?>" alt="">
             <div>
                <h3><?= $fetch_commentor['name']; ?></h3>
                <span><?= $fetch_comment['date']; ?></span>

@@ -55,7 +55,7 @@ if(isset($_POST['submit'])){
    $rename = unique_id().'.'.$ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = '../uploaded_files/'.$rename;
+   $image_folder = '../uploads/'.$rename;
 
    if(!empty($image)){
       if($image_size > 2000000){
@@ -65,7 +65,7 @@ if(isset($_POST['submit'])){
          $update_image->execute([$rename, $tutor_id]);
          move_uploaded_file($image_tmp_name, $image_folder);
          if($prev_image != '' AND $prev_image != $rename){
-            unlink('../uploaded_files/'.$prev_image);
+            unlink('../uploads/'.$prev_image);
          }
          $message[] = 'image updated successfully!';
       }

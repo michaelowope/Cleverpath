@@ -19,7 +19,7 @@ if(isset($_POST['delete_video'])){
    $verify_video->execute([$delete_id]);
    if($verify_video->rowCount() > 0){
       $fetch_file = $verify_video->fetch(PDO::FETCH_ASSOC);
-      $file_path = '../uploaded_files/'.$fetch_file['file'];
+      $file_path = '../uploads/'.$fetch_file['file'];
       if(file_exists($file_path)){
          unlink($file_path);
       }
@@ -44,7 +44,7 @@ if(isset($_POST['delete_playlist'])){
 
    if($verify_playlist->rowCount() > 0){
       $fetch_thumb = $verify_playlist->fetch(PDO::FETCH_ASSOC);
-      unlink('../uploaded_files/'.$fetch_thumb['thumb']);
+      unlink('../uploads/'.$fetch_thumb['thumb']);
       $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
       $delete_bookmark->execute([$delete_id]);
       $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
@@ -100,7 +100,7 @@ if(isset($_POST['delete_playlist'])){
             </div>
             <div><i class="fas fa-calendar"></i><span><?= $fetch_content['date']; ?></span></div>
          </div>
-         <img src="../uploaded_files/<?= $thumbnail; ?>" class="thumb" alt="">
+         <img src="../uploads/<?= $thumbnail; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_content['title']; ?></h3>
          <form action="" method="post" class="flex-btn">
             <input type="hidden" name="video_id" value="<?= $video_id; ?>">
@@ -147,7 +147,7 @@ if(isset($_POST['delete_playlist'])){
          </div>
          <div class="thumb">
             <span><?= $total_videos; ?></span>
-            <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
+            <img src="../uploads/<?= $fetch_playlist['thumb']; ?>" alt="">
          </div>
          <h3 class="title"><?= $fetch_playlist['title']; ?></h3>
          <p class="description"><?= $fetch_playlist['description']; ?></p>

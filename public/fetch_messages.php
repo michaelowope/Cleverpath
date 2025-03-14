@@ -6,13 +6,13 @@ if (!isset($_COOKIE['user_id'])) {
 }
 
 $user_id = $_COOKIE['user_id'];
-$friend_id = isset($_GET['friend_id']) ? $_GET['friend_id'] : null;
+$friend_id = $_GET['friend_id'] ?? null;
 
 if (!$friend_id) {
     exit();
 }
 
-// Fetch messages
+// Fetch messages from DB
 $messages_query = $conn->prepare("
     SELECT * FROM `messages` 
     WHERE (sender_id = :user_id AND receiver_id = :friend_id) 
@@ -36,7 +36,7 @@ foreach ($messages as $message) {
             <br>
             <?php 
             $file_extension = pathinfo($message['file'], PATHINFO_EXTENSION);
-            $file_path = "uploaded_files/" . htmlspecialchars($message['file']);
+            $file_path = "uploads/" . htmlspecialchars($message['file']);
             
             if (in_array(strtolower($file_extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
                 <img src="<?= $file_path; ?>" alt="Image" class="chat-file-preview">

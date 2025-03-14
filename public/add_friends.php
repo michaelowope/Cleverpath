@@ -144,7 +144,7 @@ $select_users->execute($params);
     <div class="box-container">
         <?php foreach ($friend_requests as $request): ?>
             <div class="box">
-                <img src="uploaded_files/<?= $request['image']; ?>" class="friend-img">
+                <img src="uploads/<?= $request['image']; ?>" class="friend-img">
                 <h3><?= htmlspecialchars($request['name']); ?></h3>
                 <p><?= htmlspecialchars($request['course']); ?> - <?= $request['level']; ?> Level</p>
                 <form action="" method="post">
@@ -160,7 +160,7 @@ $select_users->execute($params);
     <div class="box-container">
         <?php foreach ($select_users->fetchAll(PDO::FETCH_ASSOC) as $student): ?>
             <div class="box">
-                <img src="uploaded_files/<?= $student['image']; ?>" class="friend-img">
+                <img src="uploads/<?= $student['image']; ?>" class="friend-img">
                 <h3><?= htmlspecialchars($student['name']); ?></h3>
                 <p><?= htmlspecialchars($student['course']); ?> - <?= $student['level']; ?> Level</p>
                 <form action="" method="post">

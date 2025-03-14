@@ -15,7 +15,7 @@ if(isset($message)){
 
    <section class="flex">
 
-      <a href="dashboard.php" class="logo"><img src="assets/images/full-logo-black.svg" alt="Logo"></a>
+      <a href="dashboard.php" class="logo"><img src="images/full-logo-black.svg" alt="Logo"></a>
 
       <form action="search_page.php" method="post" class="search-form">
          <input type="text" name="search" placeholder="search here..." required maxlength="100">
@@ -36,7 +36,7 @@ if(isset($message)){
             if($select_profile->rowCount() > 0){
             $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
          ?>
-         <img src="../uploaded_files/<?= $fetch_profile['image']; ?>" alt="">
+         <img src="../uploads/<?= $fetch_profile['image']; ?>" alt="">
          <h3><?= $fetch_profile['name']; ?></h3>
          <span><?= $fetch_profile['department']; ?></span>
          <a href="profile.php" class="btn">view profile</a>
@@ -79,7 +79,7 @@ if(isset($message)){
             if($select_profile->rowCount() > 0){
             $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
          ?>
-         <img src="../uploaded_files/<?= $fetch_profile['image']; ?>" alt="">
+         <img src="../uploads/<?= $fetch_profile['image']; ?>" alt="">
          <h3><?= $fetch_profile['name']; ?></h3>
          <span><?= $fetch_profile['department']; ?></span>
          <a href="profile.php" class="btn">view profile</a>

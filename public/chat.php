@@ -129,7 +129,7 @@ $friends = $friends_query->fetchAll(PDO::FETCH_ASSOC) ?: []; // Ensures it's alw
             <?php foreach ($friends as $friend): ?>
                 <a class="friend-box" href="messages.php?friend_id=<?= $friend['id']; ?>">
                     <div>
-                        <img src="uploaded_files/<?= $friend['image']; ?>" class="friend-img" onerror="this.src='default-avatar.png';">
+                        <img src="uploads/<?= $friend['image']; ?>" class="friend-img" onerror="this.src='default-avatar.png';">
                         <h3><?= htmlspecialchars($friend['name']); ?></h3>
                     </div>
                     <form action="" method="post" class="unfriend-form">

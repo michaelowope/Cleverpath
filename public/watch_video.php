@@ -42,10 +42,10 @@ if(isset($_GET['get_id'])){
    ?>
    <div class="content-details">
       <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
-         <video src="uploaded_files/<?= $file_name; ?>" class="video" controls autoplay></video>
+         <video src="uploads/<?= $file_name; ?>" class="video" controls autoplay></video>
       <?php elseif($file_ext === 'pdf'): ?>
          <div id="pdfContainer">
-            <iframe id="pdfViewer" src="uploaded_files/<?= $file_name; ?>" width="100%" height="600px"></iframe>
+            <iframe id="pdfViewer" src="uploads/<?= $file_name; ?>" width="100%" height="600px"></iframe>
          </div>
          <button id="fullscreenBtn" class="btn view-fullscreen">View in Fullscreen</button>
          <a href="quiz.php?pdf_id=<?= $get_id; ?>" class='btn' style="color: white;">Generate Quiz</a>

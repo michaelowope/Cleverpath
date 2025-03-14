@@ -76,13 +76,13 @@ if(isset($_POST['remove'])){
    ?>
    <div class="box">
       <div class="tutor">
-         <img src="uploaded_files/<?= $fetch_tutor['image']; ?>" alt="">
+         <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
          <div>
             <h3><?= $fetch_tutor['name']; ?></h3>
             <span><?= $fetch_contents['date']; ?></span>
          </div>
       </div>
-      <img src="uploaded_files/<?= $fetch_contents['thumb']; ?>" alt="" class="thumb">
+      <img src="uploads/<?= $fetch_contents['thumb']; ?>" alt="" class="thumb">
       <h3 class="title"><?= $fetch_contents['title']; ?></h3>
       <form action="" method="post" class="flex-btn">
          <input type="hidden" name="content_id" value="<?= $fetch_contents['id']; ?>">
