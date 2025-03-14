@@ -53,61 +53,37 @@ $total_comments = $select_comments->rowCount();
    <div class="box-container">
 
       <div class="box">
-         <h3>welcome!</h3>
+         <h3>Welcome!</h3>
          <p><?= $fetch_profile['name']; ?></p>
          <a href="profile.php" class="btn">view profile</a>
       </div>
 
       <div class="box">
          <h3><?= $total_contents; ?></h3>
-         <p>total contents</p>
+         <p>Total contents</p>
          <a href="add_content.php" class="btn">add new content</a>
       </div>
 
       <div class="box">
          <h3><?= $total_playlists; ?></h3>
-         <p>total playlists</p>
+         <p>Total playlists</p>
          <a href="add_playlist.php" class="btn">add new playlist</a>
       </div>
 
       <div class="box">
          <h3><?= $total_likes; ?></h3>
-         <p>total likes</p>
+         <p>Total likes</p>
          <a href="contents.php" class="btn">view contents</a>
       </div>
 
       <div class="box">
          <h3><?= $total_comments; ?></h3>
-         <p>total comments</p>
+         <p>Total comments</p>
          <a href="comments.php" class="btn">view comments</a>
       </div>
-
-      <!-- <div class="box">
-         <h3>quick select</h3>
-         <p>login or register</p>
-         <div class="flex-btn">
-            <a href="login.php" class="option-btn">login</a>
-            <a href="register.php" class="option-btn">register</a>
-         </div>
-      </div> -->
-
    </div>
 
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <?php include '../components/footer.php'; ?>
 

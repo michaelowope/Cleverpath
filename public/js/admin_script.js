@@ -45,7 +45,7 @@ const enableDarkMode = () =>{
    body.classList.add('dark');
    localStorage.setItem('dark-mode', 'enabled');
    const logo = document.querySelector('.header .flex .logo img')
-   logo.setAttribute('src', '/images/full-logo-light.svg')
+   logo.setAttribute('src', '../images/full-logo-light.svg')
 }
 
 const disableDarkMode = () =>{
@@ -53,7 +53,7 @@ const disableDarkMode = () =>{
    body.classList.remove('dark');
    localStorage.setItem('dark-mode', 'disabled');
    const logo = document.querySelector('.header .flex .logo img')
-   logo.setAttribute('src', '/images/full-logo-black.svg')
+   logo.setAttribute('src', '../images/full-logo-black.svg')
 }
 
 
