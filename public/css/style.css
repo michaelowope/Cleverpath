@@ -304,6 +304,7 @@ section{
    background-color: var(--white);
    border-right: var(--border);
    z-index: 1200;
+   overflow-y: auto;
 }
 
 .side-bar .close-side-bar{
