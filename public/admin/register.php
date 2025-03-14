@@ -5,18 +5,18 @@ include '../../config/connect.php';
 if (isset($_POST['submit'])) {
     $id = unique_id();
     $name = $_POST['name'];
-    $name = filter_var($name, FILTER_SANITIZE_STRING);
+    $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $department = $_POST['department'];
-    $department = filter_var($department, FILTER_SANITIZE_STRING);
+    $department = filter_var($department, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $email = $_POST['email'];
-    $email = filter_var($email, FILTER_SANITIZE_STRING);
+    $email = filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $pass = sha1($_POST['pass']);
-    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+    $pass = filter_var($pass, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $cpass = sha1($_POST['cpass']);
-    $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
+    $cpass = filter_var($cpass, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $image = $_FILES['image']['name'];
-    $image = filter_var($image, FILTER_SANITIZE_STRING);
+    $image = filter_var($image, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $ext = pathinfo($image, PATHINFO_EXTENSION);
     $rename = unique_id().'.'.$ext;
     $image_size = $_FILES['image']['size'];

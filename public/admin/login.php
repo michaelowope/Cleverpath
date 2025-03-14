@@ -4,9 +4,9 @@ include '../../config/connect.php';
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
-    $email = filter_var($email, FILTER_SANITIZE_STRING);
+    $email = filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $pass = sha1($_POST['pass']);
-    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+    $pass = filter_var($pass, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE email = ? AND password = ? LIMIT 1");
     $select_tutor->execute([$email, $pass]);

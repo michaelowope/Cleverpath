@@ -23,7 +23,7 @@ $prev_image = $fetch_user['image'] ?? '';
 if (isset($_POST['submit'])) {
     // Handle name update
     if (!empty($_POST['name']) && $_POST['name'] !== $fetch_user['name']) {
-        $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+        $name = filter_var($_POST['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
         $update_name->execute([$name, $user_id]);
         $message[] = 'Username updated successfully!';
@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
 
     // Handle profile image update
     if (!empty($_FILES['image']['name'])) {
-        $image = filter_var($_FILES['image']['name'], FILTER_SANITIZE_STRING);
+        $image = filter_var($_FILES['image']['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $ext = pathinfo($image, PATHINFO_EXTENSION);
         $rename = uniqid() . '.' . $ext;
         $image_size = $_FILES['image']['size'];

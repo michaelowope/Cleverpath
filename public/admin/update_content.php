@@ -21,19 +21,19 @@ if (isset($_GET['get_id'])) {
 if (isset($_POST['update'])) {
     if (isset($_POST['file_id'])) {
         $file_id = $_POST['file_id'];
-        $file_id = filter_var($file_id, FILTER_SANITIZE_STRING);
+        $file_id = filter_var($file_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     } else {
         $file_id = '';
     }
 
     $status = $_POST['status'];
-    $status = filter_var($status, FILTER_SANITIZE_STRING);
+    $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $title = $_POST['title'];
-    $title = filter_var($title, FILTER_SANITIZE_STRING);
+    $title = filter_var($title, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $description = $_POST['description'];
-    $description = filter_var($description, FILTER_SANITIZE_STRING);
+    $description = filter_var($description, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $playlist = $_POST['playlist'];
-    $playlist = filter_var($playlist, FILTER_SANITIZE_STRING);
+    $playlist = filter_var($playlist, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $update_content = $conn->prepare("UPDATE `content` SET title = ?, description = ?, status = ? WHERE id = ?");
     $update_content->execute([$title, $description, $status, $file_id]);
@@ -44,11 +44,11 @@ if (isset($_POST['update'])) {
     }
 
     $old_file = isset($_POST['old_file']) ? $_POST['old_file'] : ''; // Ensure old_file exists
-    $old_file = filter_var($old_file, FILTER_SANITIZE_STRING);
+    $old_file = filter_var($old_file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
         $file = $_FILES['file']['name'];
-        $file = filter_var($file, FILTER_SANITIZE_STRING);
+        $file = filter_var($file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $file_ext = pathinfo($file, PATHINFO_EXTENSION);
         $allowed_ext = ['mp4', 'avi', 'mov', 'pdf']; // Allowed file types
 
@@ -78,7 +78,7 @@ if (isset($_POST['update'])) {
 if (isset($_POST['delete_file'])) {
     if (isset($_POST['file_id'])) {
         $delete_id = $_POST['file_id'];
-        $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
+        $delete_id = filter_var($delete_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         // Fetch and delete the associated file
         $delete_file_query = $conn->prepare("SELECT file FROM `content` WHERE id = ? LIMIT 1");

@@ -11,7 +11,7 @@ if (isset($_COOKIE['user_id'])) {
 
 if (isset($_POST['delete_comment'])) {
     $delete_id = $_POST['comment_id'];
-    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
+    $delete_id = filter_var($delete_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $verify_comment = $conn->prepare("SELECT * FROM `comments` WHERE id = ?");
     $verify_comment->execute([$delete_id]);
@@ -27,9 +27,9 @@ if (isset($_POST['delete_comment'])) {
 
 if (isset($_POST['update_now'])) {
     $update_id = $_POST['update_id'];
-    $update_id = filter_var($update_id, FILTER_SANITIZE_STRING);
+    $update_id = filter_var($update_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $update_box = $_POST['update_box'];
-    $update_box = filter_var($update_box, FILTER_SANITIZE_STRING);
+    $update_box = filter_var($update_box, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $verify_comment = $conn->prepare("SELECT * FROM `comments` WHERE id = ? AND comment = ? ORDER BY date DESC");
     $verify_comment->execute([$update_id, $update_box]);
@@ -67,7 +67,7 @@ if (isset($_POST['update_now'])) {
 <?php
    if (isset($_POST['edit_comment'])) {
        $edit_id = $_POST['comment_id'];
-       $edit_id = filter_var($edit_id, FILTER_SANITIZE_STRING);
+       $edit_id = filter_var($edit_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
        $verify_comment = $conn->prepare("SELECT * FROM `comments` WHERE id = ? LIMIT 1");
        $verify_comment->execute([$edit_id]);
        if ($verify_comment->rowCount() > 0) {

@@ -20,12 +20,10 @@ $offset = ($current_page - 1) * $items_per_page;
 if (isset($_POST['send_request'])) {
     $receiver_id = $_POST['receiver_id'];
 
-    // Ensure the user exists before sending request
     $check_user = $conn->prepare("SELECT id FROM `users` WHERE id = :receiver_id");
     $check_user->execute(['receiver_id' => $receiver_id]);
 
     if ($check_user->rowCount() > 0) {
-        // Check if the request already exists
         $check_request = $conn->prepare("SELECT * FROM `friend_requests` WHERE 
             (sender_id = :user_id AND receiver_id = :receiver_id) OR 
             (sender_id = :receiver_id AND receiver_id = :user_id)");
@@ -85,13 +83,11 @@ $query = "SELECT * FROM `users` WHERE id != :user_id";
 $params = ['user_id' => $user_id];
 
 if (!empty($existing_friends)) {
-    $friend_placeholders = [];
+    $placeholders = implode(',', array_map(fn($i) => ":friend_id_$i", array_keys($existing_friends)));
+    $query .= " AND id NOT IN ($placeholders)";
     foreach ($existing_friends as $index => $friend_id) {
-        $param_name = ":friend_id_$index";
-        $friend_placeholders[] = $param_name;
-        $params[$param_name] = $friend_id;
+        $params["friend_id_$index"] = $friend_id;
     }
-    $query .= " AND id NOT IN (" . implode(',', $friend_placeholders) . ")";
 }
 
 if ($selected_level > 0) {
@@ -109,10 +105,15 @@ if (!empty($search_query)) {
     $params['search'] = "%$search_query%";
 }
 
-// 🚀 **Fixed: MariaDB Limit/Offset Syntax Issue**
-$query .= " ORDER BY name ASC LIMIT $items_per_page OFFSET $offset";
+// Count total students for pagination
+$count_query = str_replace("SELECT *", "SELECT COUNT(*) as total", $query);
+$count_stmt = $conn->prepare($count_query);
+$count_stmt->execute($params);
+$total_users = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+$total_pages = ceil($total_users / $items_per_page);
 
-// Fetch filtered users
+// Fetch students with pagination
+$query .= " ORDER BY name ASC LIMIT " . (int)$items_per_page . " OFFSET " . (int)$offset;
 $select_users = $conn->prepare($query);
 $select_users->execute($params);
 ?>
@@ -156,16 +157,32 @@ $select_users->execute($params);
         <?php endforeach; ?>
     </div>
 
+    <!-- Filters + All Students -->
     <h2>All Students</h2>
+    <form method="GET" action="add_friends.php" class="filter-form">
+        <input type="text" name="search" placeholder="Search by name or email" value="<?= htmlspecialchars($search_query); ?>">
+        <select name="course">
+            <option value="">All Courses</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Engineering">Engineering</option>
+        </select>
+        <select name="level">
+            <option value="0">All Levels</option>
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+        </select>
+        <button type="submit" class="btn">Filter</button>
+    </form>
+
     <div class="box-container">
         <?php foreach ($select_users->fetchAll(PDO::FETCH_ASSOC) as $student): ?>
             <div class="box">
                 <img src="uploads/<?= $student['image']; ?>" class="friend-img">
                 <h3><?= htmlspecialchars($student['name']); ?></h3>
-                <p><?= htmlspecialchars($student['course']); ?> - <?= $student['level']; ?> Level</p>
                 <form action="" method="post">
                     <input type="hidden" name="receiver_id" value="<?= $student['id']; ?>">
-                    <button type="submit" name="send_request" class="btn"><i class="fas fa-user-plus"></i> Add Friend</button>
+                    <button type="submit" name="send_request" class="btn">Add Friend</button>
                 </form>
             </div>
         <?php endforeach; ?>

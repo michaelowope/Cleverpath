@@ -12,18 +12,18 @@ if (isset($_COOKIE['tutor_id'])) {
 if (isset($_POST['submit'])) {
     $id = unique_id();
     $status = $_POST['status'];
-    $status = filter_var($status, FILTER_SANITIZE_STRING);
+    $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $title = $_POST['title'];
-    $title = filter_var($title, FILTER_SANITIZE_STRING);
+    $title = filter_var($title, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $description = $_POST['description'];
-    $description = filter_var($description, FILTER_SANITIZE_STRING);
+    $description = filter_var($description, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $playlist = $_POST['playlist'];
-    $playlist = filter_var($playlist, FILTER_SANITIZE_STRING);
+    $playlist = filter_var($playlist, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $level = $_POST['level'];
-    $level = filter_var($level, FILTER_SANITIZE_STRING);
+    $level = filter_var($level, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $file = $_FILES['file']['name'];
-    $file = filter_var($file, FILTER_SANITIZE_STRING);
+    $file = filter_var($file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $file_ext = pathinfo($file, PATHINFO_EXTENSION);
     $rename_file = unique_id().'.'.$file_ext;
     $file_tmp_name = $_FILES['file']['tmp_name'];
