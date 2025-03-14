@@ -142,7 +142,7 @@ CREATE TABLE `messages` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `sender_id` VARCHAR(20) NOT NULL,
   `receiver_id` VARCHAR(20) NOT NULL,
-  `message` TEXT NOT NULL,
+  `message` TEXT NULL,
   `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `file` VARCHAR(255) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

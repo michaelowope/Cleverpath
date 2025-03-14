@@ -33,16 +33,17 @@ foreach ($messages as $message) {
         <?php endif; ?>
         
         <?php if (!empty($message['file'])): ?>
-            <br>
             <?php 
             $file_extension = pathinfo($message['file'], PATHINFO_EXTENSION);
             $file_path = "uploads/" . htmlspecialchars($message['file']);
             
             if (in_array(strtolower($file_extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
-                <img src="<?= $file_path; ?>" alt="Image" class="chat-file-preview">
+                <a href="<?= $file_path; ?>" download class='download-file'>
+                    Download File
+                </a>
             <?php else: ?>
-                <a href="<?= $file_path; ?>" target="_blank" download>
-                    <i class="fas fa-file"></i> <?= htmlspecialchars($message['file']); ?>
+                <a href="<?= $file_path; ?>" download class='download-file'>
+                    Download File
                 </a>
             <?php endif; ?>
         <?php endif; ?>

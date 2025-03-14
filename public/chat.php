@@ -57,6 +57,7 @@ $friends = $friends_query->fetchAll(PDO::FETCH_ASSOC) ?: []; // Ensures it's alw
             transition: 0.3s;
             cursor: pointer;
             text-decoration: none;
+            color: var(--black) !important;
         }
 
         .friend-box div {

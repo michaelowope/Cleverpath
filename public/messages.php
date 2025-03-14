@@ -97,13 +97,13 @@ if (!$friend) {
             padding: 10px;
             background: #fff;
             border-top: 1px solid #ddd;
+            gap: 0.4rem;
         }
         .chat-input input[type="text"] {
             flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            margin-right: 10px;
         }
         .chat-input input[type="file"] {
             display: none;
@@ -112,7 +112,6 @@ if (!$friend) {
             cursor: pointer;
             font-size: 20px;
             color: #444ead;
-            margin-right: 10px;
         }
         .chat-input button {
             background: #444ead;
@@ -124,6 +123,36 @@ if (!$friend) {
         }
         .chat-input button:hover {
             background: #363b96;
+        }
+
+        .file-preview {
+            display: none;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f1f1f1;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
+            max-width: 300px;
+        }
+
+        .file-preview span {
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+            margin-right: 0.5rem;
+        }
+
+        .file-preview .remove-file {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+            margin-left: auto;
+            border-radius: 5px;
+        }
+
+        .download-file {
+            display: block;
+            color: var(--white) !important;
         }
     </style>
 </head>
@@ -143,6 +172,10 @@ if (!$friend) {
         <input type="hidden" name="sender_id" id="sender_id" value="<?= htmlspecialchars($user_id); ?>">
         <input type="hidden" name="receiver_id" id="receiver_id" value="<?= htmlspecialchars($friend_id); ?>">
         <input type="text" id="message" placeholder="Type a message...">
+        <div class="file-preview" id="file-preview" style="display: none;">
+            <span id="file-name"></span>
+            <span class="remove-file" onclick="removeFile()">✖</span>
+        </div>
         <label for="file-input"><i class="fas fa-paperclip"></i></label>
         <input type="file" id="file-input">
         <button type="submit"><i class="fas fa-paper-plane"></i></button>
@@ -157,6 +190,29 @@ if (!$friend) {
         displayMessage(data.sender_id, data.message, data.file);
     };
 
+    document.getElementById("file-input").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById("file-preview");
+        const fileNameSpan = document.getElementById("file-name");
+
+        if (file) {
+            fileNameSpan.textContent = file.name;
+            previewContainer.style.display = "flex";
+        } else {
+            previewContainer.style.display = "none";
+        }
+    });
+
+    function removeFile() {
+        const fileInput = document.getElementById("file-input");
+        const previewContainer = document.getElementById("file-preview");
+        const fileNameSpan = document.getElementById("file-name");
+
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+        previewContainer.style.display = "none";
+    }
+
     function displayMessage(senderId, message, file) {
         const chatMessages = document.getElementById("chat-messages");
         const messageDiv = document.createElement("div");
@@ -169,12 +225,13 @@ if (!$friend) {
 
         // Display file if exists
         if (file) {
-            let filePreview = document.createElement("a");
-            filePreview.href = "/uploads/" + file;
-            filePreview.target = "_blank";
-            filePreview.innerText = "📁 View File";
-            filePreview.style.display = "block";
-            messageDiv.appendChild(filePreview);
+            let fileDownload = document.createElement("a");
+            fileDownload.classList.add('download-file');
+            fileDownload.href = "/uploads/" + file;
+            fileDownload.download = file;
+            fileDownload.innerText = "Download File";
+            
+            messageDiv.appendChild(fileDownload);
         }
 
         chatMessages.appendChild(messageDiv);
@@ -187,10 +244,12 @@ if (!$friend) {
         const receiver_id = document.getElementById("receiver_id").value;
         const message = document.getElementById("message").value.trim();
         const fileInput = document.getElementById("file-input");
+        const previewContainer = document.getElementById("file-preview");
 
         // Ensure message or file exists
         if (message !== "" || fileInput.files.length > 0) {
             let fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "";
+            console.log(fileInput.file)
 
             // Send WebSocket message (for real-time update)
             const messageData = { type: "chat", sender_id, receiver_id, message, file: fileName };
@@ -219,6 +278,7 @@ if (!$friend) {
             // Reset input fields
             document.getElementById("message").value = "";
             fileInput.value = "";
+            previewContainer.style.display = "none";
         }
     });
 </script>

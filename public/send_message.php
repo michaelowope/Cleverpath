@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $file = $_FILES['file'];
             $file_tmp = $file['tmp_name'];
             $file_name = time() . "_" . basename($file['name']);
-            $file_destination = "../uploads/" . $file_name;
+            $file_destination = "uploads/" . $file_name;
 
             if (!move_uploaded_file($file_tmp, $file_destination)) {
                 throw new Exception("File upload failed.");
