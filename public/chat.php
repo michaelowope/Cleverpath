@@ -51,7 +51,7 @@ $friends = $friends_query->fetchAll(PDO::FETCH_ASSOC) ?: []; // Ensures it's alw
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            background: var(--white);
+            background: var(--light-bg);
             padding: 1rem;
             border-radius: .5rem;
             transition: 0.3s;
@@ -101,6 +101,15 @@ $friends = $friends_query->fetchAll(PDO::FETCH_ASSOC) ?: []; // Ensures it's alw
 
         .friends-container .btn i {
             margin-right: 8px;
+        }
+        
+        .unfriend-form {
+            display: flex;
+            align-items: center;
+        }
+
+        .unfriend-form button {
+            margin: 0;
         }
     </style>
 </head>

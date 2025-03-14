@@ -32,7 +32,8 @@ if (!$friend) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with <?= htmlspecialchars($friend['name']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    <style>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -154,7 +155,7 @@ if (!$friend) {
             display: block;
             color: var(--white) !important;
         }
-    </style>
+    </style> -->
 </head>
 <body>
 
