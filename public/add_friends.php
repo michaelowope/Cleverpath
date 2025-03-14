@@ -126,6 +126,27 @@ $select_users->execute($params);
     <title>Add Friends</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .filter-form {
+            width: 100%;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }   
+
+        .filter-form input {
+            width: 100%;
+            padding: 1.5rem;
+        }
+
+        .filter-form select {
+            padding: 1rem;
+        }
+
+        .filter-form button {
+            width: fit-content;
+        }
+    </style>
 </head>
 <body>
 
@@ -160,17 +181,21 @@ $select_users->execute($params);
     <!-- Filters + All Students -->
     <h2>All Students</h2>
     <form method="GET" action="add_friends.php" class="filter-form">
-        <input type="text" name="search" placeholder="Search by name or email" value="<?= htmlspecialchars($search_query); ?>">
-        <select name="course">
+        <input type="text" name="search" placeholder="Search by name or email" value="<?= htmlspecialchars($search_query); ?>" class='box'>
+        <select name="course" class='box'>
             <option value="">All Courses</option>
-            <option value="Computer Science">Computer Science</option>
-            <option value="Engineering">Engineering</option>
+            <option value="Computer Science" <?= ($selected_course === "Computer Science") ? "selected" : "" ?>>Computer Science</option>
+            <option value="Computer Information Systems" <?= ($selected_course === "Computer Information Systems") ? "selected" : "" ?>>Computer Information Systems</option>
+            <option value="Computer Technology" <?= ($selected_course === "Computer Technology") ? "selected" : "" ?>>Computer Technology</option>
+            <option value="Software Engineering" <?= ($selected_course === "Software Engineering") ? "selected" : "" ?>>Software Engineering</option>
+            <option value="Information Technology" <?= ($selected_course === "Information Technology") ? "selected" : "" ?>>Information Technology</option>
         </select>
-        <select name="level">
+        <select name="level" class='box'>
             <option value="0">All Levels</option>
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
+            <option value="100" <?= ($selected_level == 100) ? "selected" : "" ?>>100 Level</option>
+            <option value="200" <?= ($selected_level == 200) ? "selected" : "" ?>>200 Level</option>
+            <option value="300" <?= ($selected_level == 300) ? "selected" : "" ?>>300 Level</option>
+            <option value="400" <?= ($selected_level == 400) ? "selected" : "" ?>>400 Level</option>
         </select>
         <button type="submit" class="btn">Filter</button>
     </form>
@@ -180,12 +205,26 @@ $select_users->execute($params);
             <div class="box">
                 <img src="uploads/<?= $student['image']; ?>" class="friend-img">
                 <h3><?= htmlspecialchars($student['name']); ?></h3>
+                <p><?= htmlspecialchars($student['course']); ?> - <?= $student['level']; ?> Level</p>
                 <form action="" method="post">
                     <input type="hidden" name="receiver_id" value="<?= $student['id']; ?>">
-                    <button type="submit" name="send_request" class="btn">Add Friend</button>
+                    <button type="submit" name="send_request" class="btn"><i class="fas fa-user-plus"></i> Add Friend</button>
                 </form>
             </div>
         <?php endforeach; ?>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <?php if ($current_page > 1): ?>
+            <a href="?page=<?= $current_page - 1; ?>&limit=<?= $items_per_page; ?>" class="btn">Previous</a>
+        <?php endif; ?>
+
+        <span>Page <?= $current_page; ?> of <?= $total_pages; ?></span>
+
+        <?php if ($current_page < $total_pages): ?>
+            <a href="?page=<?= $current_page + 1; ?>&limit=<?= $items_per_page; ?>" class="btn">Next</a>
+        <?php endif; ?>
     </div>
 </section>
 
