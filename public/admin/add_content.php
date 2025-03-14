@@ -2,37 +2,62 @@
 
 include '../../config/connect.php';
 
+// Always initialize $message as an array so it's iterable
+$message = [];
+
+// Check for a valid tutor cookie, otherwise redirect
 if (isset($_COOKIE['tutor_id'])) {
     $tutor_id = $_COOKIE['tutor_id'];
 } else {
     $tutor_id = '';
     header('location:login.php');
+    exit;
 }
 
+// Handle form submission
 if (isset($_POST['submit'])) {
-    $id = unique_id();
-    $status = $_POST['status'];
-    $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $title = $_POST['title'];
-    $title = filter_var($title, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $description = $_POST['description'];
-    $description = filter_var($description, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $playlist = $_POST['playlist'];
-    $playlist = filter_var($playlist, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $level = $_POST['level'];
-    $level = filter_var($level, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    $file = $_FILES['file']['name'];
-    $file = filter_var($file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $file_ext = pathinfo($file, PATHINFO_EXTENSION);
-    $rename_file = unique_id().'.'.$file_ext;
+    // Example limit of 8MB (adjust as needed)
+    $maxSize = 8 * 1024 * 1024; // 8 MB
+
+    // Collect form data
+    $id          = unique_id();
+    $status      = filter_var($_POST['status'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $title       = filter_var($_POST['title'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $description = filter_var($_POST['description'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $playlist    = filter_var($_POST['playlist'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $level       = filter_var($_POST['level'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+    // File info
+    $file          = $_FILES['file']['name'];
+    $file          = filter_var($file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $file_ext      = pathinfo($file, PATHINFO_EXTENSION);
+    $rename_file   = unique_id() . '.' . $file_ext;
     $file_tmp_name = $_FILES['file']['tmp_name'];
-    $file_folder = '../uploads/'.$rename_file;
+    $file_folder   = '../uploads/' . $rename_file;
+    $file_size     = $_FILES['file']['size'];
 
-    $add_playlist = $conn->prepare("INSERT INTO `content`(id, tutor_id, playlist_id, title, description, file, status, level) VALUES(?,?,?,?,?,?,?,?)");
-    $add_playlist->execute([$id, $tutor_id, $playlist, $title, $description, $rename_file, $status, $level]);
-    move_uploaded_file($file_tmp_name, $file_folder);
-    $message[] = 'new course uploaded!';
+    // Check if file size exceeds limit
+    if ($file_size > $maxSize) {
+        $message[] = 'Your file is too large. The maximum file size allowed is 8MB.';
+    } else {
+        // Insert data into database and move file to uploads folder
+        $add_playlist = $conn->prepare("INSERT INTO `content` (id, tutor_id, playlist_id, title, description, file, status, level)
+                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $add_playlist->execute([
+            $id,
+            $tutor_id,
+            $playlist,
+            $title,
+            $description,
+            $rename_file,
+            $status,
+            $level
+        ]);
+
+        move_uploaded_file($file_tmp_name, $file_folder);
+        $message[] = 'New course uploaded successfully!';
+    }
 }
 
 ?>
@@ -50,14 +75,21 @@ if (isset($_POST['submit'])) {
 
    <!-- custom css file link  -->
    <link rel="stylesheet" href="../css/admin_style.css">
-
 </head>
 <body>
 
 <?php include '../components/admin_header.php'; ?>
-   
-<section class="video-form">
 
+<?php
+// Display any messages
+if (!empty($message)) {
+    foreach ($message as $msg) {
+        echo '<div class="message">' . $msg . '</div>';
+    }
+}
+?>
+
+<section class="video-form">
    <h1 class="heading">upload content</h1>
 
    <form action="" method="post" enctype="multipart/form-data">
@@ -72,7 +104,7 @@ if (isset($_POST['submit'])) {
       <p>File description <span>*</span></p>
       <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
       <p>Course Level <span>*</span></p>
-      <select name="level" class='box' required>
+      <select name="level" class="box" required>
          <option value="" disabled selected>--Select Level</option>
          <option value="100">100 level</option>
          <option value="200">200 level</option>
@@ -84,44 +116,26 @@ if (isset($_POST['submit'])) {
          <option value="" disabled selected>--Select playlist</option>
          <?php
          $select_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
-$select_playlists->execute([$tutor_id]);
-if ($select_playlists->rowCount() > 0) {
-    while ($fetch_playlist = $select_playlists->fetch(PDO::FETCH_ASSOC)) {
-        ?>
-         <option value="<?= $fetch_playlist['id']; ?>"><?= $fetch_playlist['title']; ?></option>
-         <?php
-    }
-    ?>
-         <?php
-} else {
-    echo '<option value="" disabled>no playlist created yet!</option>';
-}
-?>
+         $select_playlists->execute([$tutor_id]);
+         if ($select_playlists->rowCount() > 0) {
+             while ($fetch_playlist = $select_playlists->fetch(PDO::FETCH_ASSOC)) {
+                 ?>
+                 <option value="<?= $fetch_playlist['id']; ?>"><?= $fetch_playlist['title']; ?></option>
+                 <?php
+             }
+         } else {
+             echo '<option value="" disabled>no playlist created yet!</option>';
+         }
+         ?>
       </select>
       <p>select file <span>*</span></p>
       <input type="file" name="file" accept="video/*,.pdf" required class="box">
       <input type="submit" value="Upload File" name="submit" class="btn">
    </form>
-
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <?php include '../components/footer.php'; ?>
 
 <script src="../js/admin_script.js"></script>
-
 </body>
 </html>
