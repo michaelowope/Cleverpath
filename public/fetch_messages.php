@@ -34,19 +34,13 @@ foreach ($messages as $message) {
         
         <?php if (!empty($message['file'])): ?>
             <?php 
-            $file_extension = pathinfo($message['file'], PATHINFO_EXTENSION);
-            $file_path = "uploads/" . htmlspecialchars($message['file']);
-            
-            if (in_array(strtolower($file_extension), ['jpg', 'jpeg', 'png', 'gif'])): ?>
-                <a href="<?= $file_path; ?>" download class='download-file'>
-                    Download File
-                </a>
-            <?php else: ?>
-                <a href="<?= $file_path; ?>" download class='download-file'>
-                    Download File
-                </a>
-            <?php endif; ?>
+                $file_path = "uploads/" . htmlspecialchars($message['file']);
+            ?>
+            <a href="<?= $file_path; ?>" download class="download-file">
+                Download File
+            </a>
         <?php endif; ?>
+
     </div>
     <?php
 }
