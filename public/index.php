@@ -2,10 +2,10 @@
 
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
 }
 
 $select_likes = $conn->prepare("SELECT * FROM `likes` WHERE user_id = ?");
@@ -50,8 +50,8 @@ $total_bookmarked = $select_bookmark->rowCount();
    <div class="box-container">
 
       <?php
-         if($user_id != ''){
-      ?>
+         if ($user_id != '') {
+             ?>
       <div class="box">
          <h3 class="title">likes and comments</h3>
          <p>total likes : <span><?= $total_likes; ?></span></p>
@@ -62,8 +62,8 @@ $total_bookmarked = $select_bookmark->rowCount();
          <a href="bookmark.php" class="inline-btn">view bookmark</a>
       </div>
       <?php
-         }else{ 
-      ?>
+         } else {
+             ?>
       <div class="box" style="text-align: center;">
          <h3 class="title">please login or register</h3>
           <div class="flex-btn" style="padding-top: .5rem;">
@@ -72,8 +72,8 @@ $total_bookmarked = $select_bookmark->rowCount();
          </div>
       </div>
       <?php
-      }
-      ?>
+         }
+?>
 
    </div>
 
@@ -90,16 +90,16 @@ $total_bookmarked = $select_bookmark->rowCount();
    <div class="box-container">
 
       <?php
-         $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE status = ? ORDER BY date DESC LIMIT 6");
-         $select_courses->execute(['active']);
-         if($select_courses->rowCount() > 0){
-            while($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)){
-               $course_id = $fetch_course['id'];
+   $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE status = ? ORDER BY date DESC LIMIT 6");
+$select_courses->execute(['active']);
+if ($select_courses->rowCount() > 0) {
+    while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
+        $course_id = $fetch_course['id'];
 
-               $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-               $select_tutor->execute([$fetch_course['tutor_id']]);
-               $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-      ?>
+        $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+        $select_tutor->execute([$fetch_course['tutor_id']]);
+        $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+        ?>
       <div class="box">
          <div class="tutor">
             <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -110,22 +110,22 @@ $total_bookmarked = $select_bookmark->rowCount();
          </div>
          <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
-         <?php if($user_id != ''){ ?>
+         <?php if ($user_id != '') { ?>
             <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">view playlist</a>
          <?php } else { ?>
             <a href="login.php" class="inline-btn home-btn">Login to view</a>
          <?php } ?>
       </div>
       <?php
-         }
-      }else{
-         echo '<p class="empty">no courses added yet!</p>';
-      }
-      ?>
+    }
+} else {
+    echo '<p class="empty">no courses added yet!</p>';
+}
+?>
 
    </div>
 
-   <?php if($user_id != ''){ ?>
+   <?php if ($user_id != '') { ?>
       <div class="more-btn">
          <a href="courses.php" class="inline-option-btn">view more</a>
       </div>

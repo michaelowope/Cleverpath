@@ -24,9 +24,10 @@ try {
 
 // Ensure function is not redefined
 if (!function_exists('unique_id')) {
-    function unique_id() {
+    function unique_id()
+    {
         $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $rand = array();
+        $rand = [];
         $length = strlen($str) - 1;
         for ($i = 0; $i < 20; $i++) {
             $n = mt_rand(0, $length);
@@ -35,5 +36,3 @@ if (!function_exists('unique_id')) {
         return implode($rand);
     }
 }
-
-?>

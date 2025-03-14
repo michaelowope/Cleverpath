@@ -1,13 +1,13 @@
 <?php
 if (isset($message) && is_array($message)) {
-   foreach ($message as $msg) {
-      echo '
+    foreach ($message as $msg) {
+        echo '
       <div class="message">
          <span>' . htmlspecialchars($msg) . '</span>
          <i class="fas fa-times" onclick="this.parentElement.remove();"></i>
       </div>
       ';
-   }
+    }
 }
 ?>
 
@@ -32,29 +32,29 @@ if (isset($message) && is_array($message)) {
       <div class="profile" id='dropdown'>
          <?php
             if (!empty($user_id)) {
-               $select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
-               $select_profile->execute([$user_id]);
+                $select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
+                $select_profile->execute([$user_id]);
 
-               if ($select_profile->rowCount() > 0) {
-                  $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-         ?>
+                if ($select_profile->rowCount() > 0) {
+                    $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+                    ?>
          <img src="uploads/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
          <h3><?= htmlspecialchars($fetch_profile['name']); ?></h3>
          <span>student</span>
          <a href="profile.php" class="btn">View Profile</a>
          <a href="components/user_logout.php" onclick="return confirm('Logout from this website?');" class="delete-btn">Logout</a>
          <?php
-               } else {
-         ?>
+                } else {
+                    ?>
          <h3>Please login or register</h3>
          <div class="flex-btn">
             <a href="login.php" class="option-btn">Login</a>
             <a href="register.php" class="option-btn">Register</a>
          </div>
          <?php
-               }
+                }
             } else {
-         ?>
+                ?>
          <h3>Please login or register</h3>
          <div class="flex-btn">
             <a href="login.php" class="option-btn">Login</a>
@@ -76,29 +76,29 @@ if (isset($message) && is_array($message)) {
 
    <div class="profile">
          <?php
-            if (!empty($user_id)) {
-               $select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
-               $select_profile->execute([$user_id]);
+                   if (!empty($user_id)) {
+                       $select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
+                       $select_profile->execute([$user_id]);
 
-               if ($select_profile->rowCount() > 0) {
-                  $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-         ?>
+                       if ($select_profile->rowCount() > 0) {
+                           $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+                           ?>
          <img src="uploads/<?= htmlspecialchars($fetch_profile['image'] ?? 'default-avatar.png'); ?>" alt="User Avatar">
          <h3><?= htmlspecialchars($fetch_profile['name']); ?></h3>
          <span>Student</span>
          <a href="profile.php" class="btn">View Profile</a>
          <?php
-               } else {
-         ?>
+                       } else {
+                           ?>
          <h3>Please login or register</h3>
          <div class="flex-btn" style="padding-top: .5rem;">
             <a href="login.php" class="option-btn">Login</a>
             <a href="register.php" class="option-btn">Register</a>
          </div>
          <?php
-               }
-            } else {
-         ?>
+                       }
+                   } else {
+                       ?>
          <h3>Please login or register</h3>
          <div class="flex-btn">
             <a href="login.php" class="option-btn">Login</a>

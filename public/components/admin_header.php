@@ -1,13 +1,13 @@
 <?php
-if(isset($message)){
-   foreach($message as $message){
-      echo '
+if (isset($message)) {
+    foreach ($message as $message) {
+        echo '
       <div class="message">
          <span>'.$message.'</span>
          <i class="fas fa-times" onclick="this.parentElement.remove();"></i>
       </div>
       ';
-   }
+    }
 }
 ?>
 
@@ -32,10 +32,10 @@ if(isset($message)){
       <div class="profile" id='dropdown'>
          <?php
             $select_profile = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-            $select_profile->execute([$tutor_id]);
-            if($select_profile->rowCount() > 0){
-            $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-         ?>
+$select_profile->execute([$tutor_id]);
+if ($select_profile->rowCount() > 0) {
+    $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+    ?>
          <img src="../uploads/<?= $fetch_profile['image']; ?>" alt="">
          <h3><?= $fetch_profile['name']; ?></h3>
          <span><?= $fetch_profile['department']; ?></span>
@@ -46,16 +46,16 @@ if(isset($message)){
          </div> -->
          <a href="../components/admin_logout.php" onclick="return confirm('logout from this website?');" class="delete-btn">logout</a>
          <?php
-            }else{
-         ?>
+} else {
+    ?>
          <h3>please login or register</h3>
           <div class="flex-btn">
             <a href="login.php" class="option-btn">login</a>
             <a href="register.php" class="option-btn">register</a>
          </div>
          <?php
-            }
-         ?>
+}
+?>
       </div>
 
    </section>
@@ -74,26 +74,26 @@ if(isset($message)){
 
    <div class="profile">
          <?php
-            $select_profile = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-            $select_profile->execute([$tutor_id]);
-            if($select_profile->rowCount() > 0){
-            $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-         ?>
+   $select_profile = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+$select_profile->execute([$tutor_id]);
+if ($select_profile->rowCount() > 0) {
+    $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+    ?>
          <img src="../uploads/<?= $fetch_profile['image']; ?>" alt="">
          <h3><?= $fetch_profile['name']; ?></h3>
          <span><?= $fetch_profile['department']; ?></span>
          <a href="profile.php" class="btn">view profile</a>
          <?php
-            }else{
-         ?>
+} else {
+    ?>
          <h3>please login or register</h3>
           <div class="flex-btn">
             <a href="login.php" class="option-btn">login</a>
             <a href="register.php" class="option-btn">register</a>
          </div>
          <?php
-            }
-         ?>
+}
+?>
       </div>
 
    <nav class="navbar">

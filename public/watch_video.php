@@ -1,18 +1,18 @@
 <?php
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
 }
 
-if(isset($_GET['get_id'])){
-   $get_id = $_GET['get_id'];
-}else{
-   $get_id = '';
-   header('location:home.php');
-   exit();
+if (isset($_GET['get_id'])) {
+    $get_id = $_GET['get_id'];
+} else {
+    $get_id = '';
+    header('location:home.php');
+    exit();
 }
 
 ?>
@@ -34,16 +34,16 @@ if(isset($_GET['get_id'])){
 <section class="watch-content">
    <?php
       $select_content = $conn->prepare("SELECT * FROM `content` WHERE id = ? AND status = ?");
-      $select_content->execute([$get_id, 'active']);
-      if($select_content->rowCount() > 0){
-         while($fetch_content = $select_content->fetch(PDO::FETCH_ASSOC)){
-            $file_name = $fetch_content['file'];
-            $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-   ?>
+$select_content->execute([$get_id, 'active']);
+if ($select_content->rowCount() > 0) {
+    while ($fetch_content = $select_content->fetch(PDO::FETCH_ASSOC)) {
+        $file_name = $fetch_content['file'];
+        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+        ?>
    <div class="content-details">
-      <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
+      <?php if (in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
          <video src="uploads/<?= $file_name; ?>" class="video" controls autoplay></video>
-      <?php elseif($file_ext === 'pdf'): ?>
+      <?php elseif ($file_ext === 'pdf'): ?>
          <div id="pdfContainer">
             <iframe id="pdfViewer" src="uploads/<?= $file_name; ?>" width="100%" height="600px"></iframe>
          </div>
@@ -58,11 +58,11 @@ if(isset($_GET['get_id'])){
       <div class="description"><p><?= htmlspecialchars($fetch_content['description']); ?></p></div>
    </div>
    <?php
-         }
-      } else {
-         echo '<p class="empty">No content found!</p>';
-      }
-   ?>
+    }
+} else {
+    echo '<p class="empty">No content found!</p>';
+}
+?>
 </section>
 
 <?php include 'components/footer.php'; ?>

@@ -2,42 +2,42 @@
 
 include '../../config/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
-   $tutor_id = $_COOKIE['tutor_id'];
-}else{
-   $tutor_id = '';
-   header('location:login.php');
-   exit();
+if (isset($_COOKIE['tutor_id'])) {
+    $tutor_id = $_COOKIE['tutor_id'];
+} else {
+    $tutor_id = '';
+    header('location:login.php');
+    exit();
 }
 
-if(isset($_POST['delete_video'])){
-   $delete_id = $_POST['video_id'];
-   $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
+if (isset($_POST['delete_video'])) {
+    $delete_id = $_POST['video_id'];
+    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
 
-   $verify_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
-   $verify_video->execute([$delete_id]);
+    $verify_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
+    $verify_video->execute([$delete_id]);
 
-   if($verify_video->rowCount() > 0){
-      $fetch_file = $verify_video->fetch(PDO::FETCH_ASSOC);
-      $file_path = '../uploads/'.$fetch_file['file'];
+    if ($verify_video->rowCount() > 0) {
+        $fetch_file = $verify_video->fetch(PDO::FETCH_ASSOC);
+        $file_path = '../uploads/'.$fetch_file['file'];
 
-      if(file_exists($file_path)){
-         unlink($file_path);
-      }
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
 
-      $delete_likes = $conn->prepare("DELETE FROM `likes` WHERE content_id = ?");
-      $delete_likes->execute([$delete_id]);
+        $delete_likes = $conn->prepare("DELETE FROM `likes` WHERE content_id = ?");
+        $delete_likes->execute([$delete_id]);
 
-      $delete_comments = $conn->prepare("DELETE FROM `comments` WHERE content_id = ?");
-      $delete_comments->execute([$delete_id]);
+        $delete_comments = $conn->prepare("DELETE FROM `comments` WHERE content_id = ?");
+        $delete_comments->execute([$delete_id]);
 
-      $delete_content = $conn->prepare("DELETE FROM `content` WHERE id = ?");
-      $delete_content->execute([$delete_id]);
+        $delete_content = $conn->prepare("DELETE FROM `content` WHERE id = ?");
+        $delete_content->execute([$delete_id]);
 
-      $message[] = 'File deleted!';
-   } else {
-      $message[] = 'File already deleted!';
-   }
+        $message[] = 'File deleted!';
+    } else {
+        $message[] = 'File already deleted!';
+    }
 }
 
 ?>
@@ -66,20 +66,20 @@ if(isset($_POST['delete_video'])){
 
       <?php
       $select_files = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ? ORDER BY date DESC");
-      $select_files->execute([$tutor_id]);
-      if($select_files->rowCount() > 0){
-         while($fetch_files = $select_files->fetch(PDO::FETCH_ASSOC)){ 
-            $file_id = $fetch_files['id'];
-            $file_name = $fetch_files['file'];
-            $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $playlist_id = $fetch_files['playlist_id'];
+$select_files->execute([$tutor_id]);
+if ($select_files->rowCount() > 0) {
+    while ($fetch_files = $select_files->fetch(PDO::FETCH_ASSOC)) {
+        $file_id = $fetch_files['id'];
+        $file_name = $fetch_files['file'];
+        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+        $playlist_id = $fetch_files['playlist_id'];
 
-            // Fetch the playlist thumbnail
-            $select_playlist_thumb = $conn->prepare("SELECT thumb FROM `playlist` WHERE id = ? LIMIT 1");
-            $select_playlist_thumb->execute([$playlist_id]);
-            $fetch_playlist_thumb = $select_playlist_thumb->fetch(PDO::FETCH_ASSOC);
-            $thumbnail = $fetch_playlist_thumb ? $fetch_playlist_thumb['thumb'] : "default-thumb.jpg";
-      ?>
+        // Fetch the playlist thumbnail
+        $select_playlist_thumb = $conn->prepare("SELECT thumb FROM `playlist` WHERE id = ? LIMIT 1");
+        $select_playlist_thumb->execute([$playlist_id]);
+        $fetch_playlist_thumb = $select_playlist_thumb->fetch(PDO::FETCH_ASSOC);
+        $thumbnail = $fetch_playlist_thumb ? $fetch_playlist_thumb['thumb'] : "default-thumb.jpg";
+        ?>
       <div class="box">
          <div class="flex">
             <div>
@@ -90,9 +90,9 @@ if(isset($_POST['delete_video'])){
          </div>
 
          <div class="thumb">
-            <?php if(in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
+            <?php if (in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>
                <video src="../uploads/<?= $file_name; ?>" class="thumb" controls></video>
-            <?php elseif($file_ext === 'pdf'): ?>
+            <?php elseif ($file_ext === 'pdf'): ?>
                <a href="../uploads/<?= $file_name; ?>" target="_blank">
                   <img src="../uploads/<?= $thumbnail; ?>" class="thumb" alt="PDF File">
                </a>
@@ -108,11 +108,11 @@ if(isset($_POST['delete_video'])){
          <a href="view_content.php?get_id=<?= $file_id; ?>" class="btn">View Content</a>
       </div>
       <?php
-         }
-      } else {
-         echo '<p class="empty">No contents added yet!</p>';
-      }
-      ?>
+    }
+} else {
+    echo '<p class="empty">No contents added yet!</p>';
+}
+?>
    </div>
 </section>
 

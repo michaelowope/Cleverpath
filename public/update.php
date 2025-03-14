@@ -3,11 +3,11 @@
 include '../config/connect.php';
 
 if (isset($_COOKIE['user_id'])) {
-   $user_id = $_COOKIE['user_id'];
+    $user_id = $_COOKIE['user_id'];
 } else {
-   $user_id = '';
-   header('location:login.php');
-   exit();
+    $user_id = '';
+    header('location:login.php');
+    exit();
 }
 
 $message = [];
@@ -21,74 +21,74 @@ $prev_pass = $fetch_user['password'] ?? '';
 $prev_image = $fetch_user['image'] ?? '';
 
 if (isset($_POST['submit'])) {
-   // Handle name update
-   if (!empty($_POST['name']) && $_POST['name'] !== $fetch_user['name']) {
-      $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-      $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
-      $update_name->execute([$name, $user_id]);
-      $message[] = 'Username updated successfully!';
-   }
+    // Handle name update
+    if (!empty($_POST['name']) && $_POST['name'] !== $fetch_user['name']) {
+        $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+        $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
+        $update_name->execute([$name, $user_id]);
+        $message[] = 'Username updated successfully!';
+    }
 
-   // Handle email update (only if changed)
-   if (!empty($_POST['email']) && $_POST['email'] !== $fetch_user['email']) {
-      $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-      $select_email = $conn->prepare("SELECT email FROM `users` WHERE email = ? LIMIT 1");
-      $select_email->execute([$email]);
+    // Handle email update (only if changed)
+    if (!empty($_POST['email']) && $_POST['email'] !== $fetch_user['email']) {
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $select_email = $conn->prepare("SELECT email FROM `users` WHERE email = ? LIMIT 1");
+        $select_email->execute([$email]);
 
-      if ($select_email->rowCount() > 0) {
-         $message[] = 'Email already taken!';
-      } else {
-         $update_email = $conn->prepare("UPDATE `users` SET email = ? WHERE id = ?");
-         $update_email->execute([$email, $user_id]);
-         $message[] = 'Email updated successfully!';
-      }
-   }
+        if ($select_email->rowCount() > 0) {
+            $message[] = 'Email already taken!';
+        } else {
+            $update_email = $conn->prepare("UPDATE `users` SET email = ? WHERE id = ?");
+            $update_email->execute([$email, $user_id]);
+            $message[] = 'Email updated successfully!';
+        }
+    }
 
-   // Handle profile image update
-   if (!empty($_FILES['image']['name'])) {
-      $image = filter_var($_FILES['image']['name'], FILTER_SANITIZE_STRING);
-      $ext = pathinfo($image, PATHINFO_EXTENSION);
-      $rename = uniqid() . '.' . $ext;
-      $image_size = $_FILES['image']['size'];
-      $image_tmp_name = $_FILES['image']['tmp_name'];
-      $image_folder = 'uploads/' . $rename;
+    // Handle profile image update
+    if (!empty($_FILES['image']['name'])) {
+        $image = filter_var($_FILES['image']['name'], FILTER_SANITIZE_STRING);
+        $ext = pathinfo($image, PATHINFO_EXTENSION);
+        $rename = uniqid() . '.' . $ext;
+        $image_size = $_FILES['image']['size'];
+        $image_tmp_name = $_FILES['image']['tmp_name'];
+        $image_folder = 'uploads/' . $rename;
 
-      if ($image_size > 2000000) {
-         $message[] = 'Image size too large!';
-      } else {
-         move_uploaded_file($image_tmp_name, $image_folder);
-         $update_image = $conn->prepare("UPDATE `users` SET `image` = ? WHERE id = ?");
-         $update_image->execute([$rename, $user_id]);
+        if ($image_size > 2000000) {
+            $message[] = 'Image size too large!';
+        } else {
+            move_uploaded_file($image_tmp_name, $image_folder);
+            $update_image = $conn->prepare("UPDATE `users` SET `image` = ? WHERE id = ?");
+            $update_image->execute([$rename, $user_id]);
 
-         // Delete old image if exists
-         if (!empty($prev_image) && file_exists('uploads/' . $prev_image) && $prev_image !== $rename) {
-            unlink('uploads/' . $prev_image);
-         }
+            // Delete old image if exists
+            if (!empty($prev_image) && file_exists('uploads/' . $prev_image) && $prev_image !== $rename) {
+                unlink('uploads/' . $prev_image);
+            }
 
-         $message[] = 'Profile image updated successfully!';
-      }
-   }
+            $message[] = 'Profile image updated successfully!';
+        }
+    }
 
-   // Handle password update only if user provides inputs
-   if (!empty($_POST['old_pass']) || !empty($_POST['new_pass']) || !empty($_POST['cpass'])) {
-      if (!empty($_POST['old_pass']) && !empty($_POST['new_pass']) && !empty($_POST['cpass'])) {
-         $old_pass = sha1($_POST['old_pass']);
-         $new_pass = sha1($_POST['new_pass']);
-         $cpass = sha1($_POST['cpass']);
+    // Handle password update only if user provides inputs
+    if (!empty($_POST['old_pass']) || !empty($_POST['new_pass']) || !empty($_POST['cpass'])) {
+        if (!empty($_POST['old_pass']) && !empty($_POST['new_pass']) && !empty($_POST['cpass'])) {
+            $old_pass = sha1($_POST['old_pass']);
+            $new_pass = sha1($_POST['new_pass']);
+            $cpass = sha1($_POST['cpass']);
 
-         if ($old_pass !== $prev_pass) {
-            $message[] = 'Old password does not match!';
-         } elseif ($new_pass !== $cpass) {
-            $message[] = 'Confirm password does not match!';
-         } elseif ($new_pass === $prev_pass) {
-            $message[] = 'New password cannot be the same as the old password!';
-         } else {
-            $update_pass = $conn->prepare("UPDATE `users` SET password = ? WHERE id = ?");
-            $update_pass->execute([$new_pass, $user_id]);
-            $message[] = 'Password updated successfully!';
-         }
-      }
-   }
+            if ($old_pass !== $prev_pass) {
+                $message[] = 'Old password does not match!';
+            } elseif ($new_pass !== $cpass) {
+                $message[] = 'Confirm password does not match!';
+            } elseif ($new_pass === $prev_pass) {
+                $message[] = 'New password cannot be the same as the old password!';
+            } else {
+                $update_pass = $conn->prepare("UPDATE `users` SET password = ? WHERE id = ?");
+                $update_pass->execute([$new_pass, $user_id]);
+                $message[] = 'Password updated successfully!';
+            }
+        }
+    }
 }
 
 ?>

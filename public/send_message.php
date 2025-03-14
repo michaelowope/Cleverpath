@@ -1,4 +1,5 @@
 <?php
+
 include '../config/connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -64,4 +65,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: " . $e->getMessage());
     }
 }
-?>

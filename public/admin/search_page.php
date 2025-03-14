@@ -2,57 +2,57 @@
 
 include '../../config/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
-   $tutor_id = $_COOKIE['tutor_id'];
-}else{
-   $tutor_id = '';
-   header('location:login.php');
-   exit();
+if (isset($_COOKIE['tutor_id'])) {
+    $tutor_id = $_COOKIE['tutor_id'];
+} else {
+    $tutor_id = '';
+    header('location:login.php');
+    exit();
 }
 
-if(isset($_POST['delete_video'])){
-   $delete_id = $_POST['video_id'];
-   $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
-   
-   // Verify video existence
-   $verify_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
-   $verify_video->execute([$delete_id]);
-   if($verify_video->rowCount() > 0){
-      $fetch_file = $verify_video->fetch(PDO::FETCH_ASSOC);
-      $file_path = '../uploads/'.$fetch_file['file'];
-      if(file_exists($file_path)){
-         unlink($file_path);
-      }
-      $delete_likes = $conn->prepare("DELETE FROM `likes` WHERE content_id = ?");
-      $delete_likes->execute([$delete_id]);
-      $delete_comments = $conn->prepare("DELETE FROM `comments` WHERE content_id = ?");
-      $delete_comments->execute([$delete_id]);
-      $delete_content = $conn->prepare("DELETE FROM `content` WHERE id = ?");
-      $delete_content->execute([$delete_id]);
-      $message[] = 'File deleted!';
-   } else {
-      $message[] = 'File already deleted!';
-   }
+if (isset($_POST['delete_video'])) {
+    $delete_id = $_POST['video_id'];
+    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
+
+    // Verify video existence
+    $verify_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
+    $verify_video->execute([$delete_id]);
+    if ($verify_video->rowCount() > 0) {
+        $fetch_file = $verify_video->fetch(PDO::FETCH_ASSOC);
+        $file_path = '../uploads/'.$fetch_file['file'];
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+        $delete_likes = $conn->prepare("DELETE FROM `likes` WHERE content_id = ?");
+        $delete_likes->execute([$delete_id]);
+        $delete_comments = $conn->prepare("DELETE FROM `comments` WHERE content_id = ?");
+        $delete_comments->execute([$delete_id]);
+        $delete_content = $conn->prepare("DELETE FROM `content` WHERE id = ?");
+        $delete_content->execute([$delete_id]);
+        $message[] = 'File deleted!';
+    } else {
+        $message[] = 'File already deleted!';
+    }
 }
 
-if(isset($_POST['delete_playlist'])){
-   $delete_id = $_POST['playlist_id'];
-   $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
+if (isset($_POST['delete_playlist'])) {
+    $delete_id = $_POST['playlist_id'];
+    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
 
-   $verify_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND tutor_id = ? LIMIT 1");
-   $verify_playlist->execute([$delete_id, $tutor_id]);
+    $verify_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND tutor_id = ? LIMIT 1");
+    $verify_playlist->execute([$delete_id, $tutor_id]);
 
-   if($verify_playlist->rowCount() > 0){
-      $fetch_thumb = $verify_playlist->fetch(PDO::FETCH_ASSOC);
-      unlink('../uploads/'.$fetch_thumb['thumb']);
-      $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
-      $delete_bookmark->execute([$delete_id]);
-      $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
-      $delete_playlist->execute([$delete_id]);
-      $message[] = 'Playlist deleted!';
-   } else {
-      $message[] = 'Playlist already deleted!';
-   }
+    if ($verify_playlist->rowCount() > 0) {
+        $fetch_thumb = $verify_playlist->fetch(PDO::FETCH_ASSOC);
+        unlink('../uploads/'.$fetch_thumb['thumb']);
+        $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
+        $delete_bookmark->execute([$delete_id]);
+        $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
+        $delete_playlist->execute([$delete_id]);
+        $message[] = 'Playlist deleted!';
+    } else {
+        $message[] = 'Playlist already deleted!';
+    }
 }
 
 ?>
@@ -74,24 +74,24 @@ if(isset($_POST['delete_playlist'])){
    <h1 class="heading">Search Results</h1>
    <div class="box-container">
    <?php
-      if(isset($_POST['search']) or isset($_POST['search_btn'])){
-         $search = $_POST['search'];
-         
-         // Fetch content with playlist thumbnail
-         $select_videos = $conn->prepare("
+      if (isset($_POST['search']) or isset($_POST['search_btn'])) {
+          $search = $_POST['search'];
+
+          // Fetch content with playlist thumbnail
+          $select_videos = $conn->prepare("
             SELECT content.*, playlist.thumb AS playlist_thumb 
             FROM `content` 
             LEFT JOIN `playlist` ON content.playlist_id = playlist.id 
             WHERE content.title LIKE ? AND content.tutor_id = ? 
             ORDER BY content.date DESC
          ");
-         $select_videos->execute(["%{$search}%", $tutor_id]);
+          $select_videos->execute(["%{$search}%", $tutor_id]);
 
-         if($select_videos->rowCount() > 0){
-            while($fetch_content = $select_videos->fetch(PDO::FETCH_ASSOC)){ 
-               $video_id = $fetch_content['id'];
-               $thumbnail = !empty($fetch_content['playlist_thumb']) ? $fetch_content['playlist_thumb'] : 'course-default-images.jpg';
-   ?>
+          if ($select_videos->rowCount() > 0) {
+              while ($fetch_content = $select_videos->fetch(PDO::FETCH_ASSOC)) {
+                  $video_id = $fetch_content['id'];
+                  $thumbnail = !empty($fetch_content['playlist_thumb']) ? $fetch_content['playlist_thumb'] : 'course-default-images.jpg';
+                  ?>
       <div class="box">
          <div class="flex">
             <div>
@@ -110,14 +110,14 @@ if(isset($_POST['delete_playlist'])){
          <a href="view_content.php?get_id=<?= $video_id; ?>" class="btn">View Content</a>
       </div>
    <?php
-            }
-         } else {
-            echo '<p class="empty">No contents found!</p>';
-         }
+              }
+          } else {
+              echo '<p class="empty">No contents found!</p>';
+          }
       } else {
-         echo '<p class="empty">Please search something!</p>';
+          echo '<p class="empty">Please search something!</p>';
       }
-   ?>
+?>
    </div>
 </section>
 
@@ -125,18 +125,18 @@ if(isset($_POST['delete_playlist'])){
    <h1 class="heading">Courses</h1>
    <div class="box-container">
    <?php
-      if(isset($_POST['search']) or isset($_POST['search_btn'])){
-         $search = $_POST['search'];
-         $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE title LIKE ? AND tutor_id = ? ORDER BY date DESC");
-         $select_playlist->execute(["%{$search}%", $tutor_id]);
+   if (isset($_POST['search']) or isset($_POST['search_btn'])) {
+       $search = $_POST['search'];
+       $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE title LIKE ? AND tutor_id = ? ORDER BY date DESC");
+       $select_playlist->execute(["%{$search}%", $tutor_id]);
 
-         if($select_playlist->rowCount() > 0){
-            while($fetch_playlist = $select_playlist->fetch(PDO::FETCH_ASSOC)){
+       if ($select_playlist->rowCount() > 0) {
+           while ($fetch_playlist = $select_playlist->fetch(PDO::FETCH_ASSOC)) {
                $playlist_id = $fetch_playlist['id'];
                $count_videos = $conn->prepare("SELECT * FROM `content` WHERE playlist_id = ?");
                $count_videos->execute([$playlist_id]);
                $total_videos = $count_videos->rowCount();
-   ?>
+               ?>
       <div class="box">
          <div class="flex">
             <div>
@@ -159,14 +159,14 @@ if(isset($_POST['delete_playlist'])){
          <a href="view_playlist.php?get_id=<?= $playlist_id; ?>" class="btn">View Courses</a>
       </div>
    <?php
-            }
-         } else {
-            echo '<p class="empty">No courses found!</p>';
-         }
-      } else {
-         echo '<p class="empty">Please search something!</p>';
-      }
-   ?>
+           }
+       } else {
+           echo '<p class="empty">No courses found!</p>';
+       }
+   } else {
+       echo '<p class="empty">Please search something!</p>';
+   }
+?>
    </div>
 </section>
 

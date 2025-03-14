@@ -33,7 +33,7 @@ foreach ($messages as $message) {
         <?php endif; ?>
         
         <?php if (!empty($message['file'])): ?>
-            <?php 
+            <?php
                 $file_path = "uploads/" . htmlspecialchars($message['file']);
             ?>
             <a href="<?= $file_path; ?>" download class="download-file">

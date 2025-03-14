@@ -2,11 +2,11 @@
 
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
-   header('location:home.php');
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
+    header('location:home.php');
 }
 
 ?>
@@ -38,20 +38,19 @@ if(isset($_COOKIE['user_id'])){
 
       <?php
          $select_bookmark = $conn->prepare("SELECT * FROM `bookmark` WHERE user_id = ?");
-         $select_bookmark->execute([$user_id]);
-         if($select_bookmark->rowCount() > 0){
-            while($fetch_bookmark = $select_bookmark->fetch(PDO::FETCH_ASSOC)){
-               $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND status = ? ORDER BY date DESC");
-               $select_courses->execute([$fetch_bookmark['playlist_id'], 'active']);
-               if($select_courses->rowCount() > 0){
-                  while($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)){
+$select_bookmark->execute([$user_id]);
+if ($select_bookmark->rowCount() > 0) {
+    while ($fetch_bookmark = $select_bookmark->fetch(PDO::FETCH_ASSOC)) {
+        $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND status = ? ORDER BY date DESC");
+        $select_courses->execute([$fetch_bookmark['playlist_id'], 'active']);
+        if ($select_courses->rowCount() > 0) {
+            while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
+                $course_id = $fetch_course['id'];
 
-                  $course_id = $fetch_course['id'];
-
-                  $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-                  $select_tutor->execute([$fetch_course['tutor_id']]);
-                  $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-      ?>
+                $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+                $select_tutor->execute([$fetch_course['tutor_id']]);
+                $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+                ?>
       <div class="box">
          <div class="tutor">
             <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -65,15 +64,15 @@ if(isset($_COOKIE['user_id'])){
          <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn">view playlist</a>
       </div>
       <?php
-               }
-            }else{
-               echo '<p class="empty">no courses found!</p>';
             }
-         }
-      }else{
-         echo '<p class="empty">nothing bookmarked yet!</p>';
-      }
-      ?>
+        } else {
+            echo '<p class="empty">no courses found!</p>';
+        }
+    }
+} else {
+    echo '<p class="empty">nothing bookmarked yet!</p>';
+}
+?>
 
    </div>
 

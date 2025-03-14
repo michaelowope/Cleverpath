@@ -1,29 +1,29 @@
 <?php
 
-   include '../../config/connect.php';
+include '../../config/connect.php';
 
-   if(isset($_COOKIE['tutor_id'])){
-      $tutor_id = $_COOKIE['tutor_id'];
-   }else{
-      $tutor_id = '';
-      header('location:login.php');
-   }
+if (isset($_COOKIE['tutor_id'])) {
+    $tutor_id = $_COOKIE['tutor_id'];
+} else {
+    $tutor_id = '';
+    header('location:login.php');
+}
 
-   $select_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
-   $select_playlists->execute([$tutor_id]);
-   $total_playlists = $select_playlists->rowCount();
+$select_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
+$select_playlists->execute([$tutor_id]);
+$total_playlists = $select_playlists->rowCount();
 
-   $select_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
-   $select_contents->execute([$tutor_id]);
-   $total_contents = $select_contents->rowCount();
+$select_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
+$select_contents->execute([$tutor_id]);
+$total_contents = $select_contents->rowCount();
 
-   $select_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
-   $select_likes->execute([$tutor_id]);
-   $total_likes = $select_likes->rowCount();
+$select_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
+$select_likes->execute([$tutor_id]);
+$total_likes = $select_likes->rowCount();
 
-   $select_comments = $conn->prepare("SELECT * FROM `comments` WHERE tutor_id = ?");
-   $select_comments->execute([$tutor_id]);
-   $total_comments = $select_comments->rowCount();
+$select_comments = $conn->prepare("SELECT * FROM `comments` WHERE tutor_id = ?");
+$select_comments->execute([$tutor_id]);
+$total_comments = $select_comments->rowCount();
 
 ?>
 

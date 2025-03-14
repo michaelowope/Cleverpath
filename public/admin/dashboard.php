@@ -2,11 +2,11 @@
 
 include '../../config/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
-   $tutor_id = $_COOKIE['tutor_id'];
-}else{
-   $tutor_id = '';
-   header('location:login.php');
+if (isset($_COOKIE['tutor_id'])) {
+    $tutor_id = $_COOKIE['tutor_id'];
+} else {
+    $tutor_id = '';
+    header('location:login.php');
 }
 
 $select_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");

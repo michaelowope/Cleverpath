@@ -2,31 +2,29 @@
 
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
-   header('location:home.php');
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
+    header('location:home.php');
 }
 
-if(isset($_POST['remove'])){
+if (isset($_POST['remove'])) {
+    if ($user_id != '') {
+        $content_id = $_POST['content_id'];
+        $content_id = filter_var($content_id, FILTER_SANITIZE_STRING);
 
-   if($user_id != ''){
-      $content_id = $_POST['content_id'];
-      $content_id = filter_var($content_id, FILTER_SANITIZE_STRING);
+        $verify_likes = $conn->prepare("SELECT * FROM `likes` WHERE user_id = ? AND content_id = ?");
+        $verify_likes->execute([$user_id, $content_id]);
 
-      $verify_likes = $conn->prepare("SELECT * FROM `likes` WHERE user_id = ? AND content_id = ?");
-      $verify_likes->execute([$user_id, $content_id]);
-
-      if($verify_likes->rowCount() > 0){
-         $remove_likes = $conn->prepare("DELETE FROM `likes` WHERE user_id = ? AND content_id = ?");
-         $remove_likes->execute([$user_id, $content_id]);
-         $message[] = 'removed from likes!';
-      }
-   }else{
-      $message[] = 'please login first!';
-   }
-
+        if ($verify_likes->rowCount() > 0) {
+            $remove_likes = $conn->prepare("DELETE FROM `likes` WHERE user_id = ? AND content_id = ?");
+            $remove_likes->execute([$user_id, $content_id]);
+            $message[] = 'removed from likes!';
+        }
+    } else {
+        $message[] = 'please login first!';
+    }
 }
 
 ?>
@@ -60,20 +58,18 @@ if(isset($_POST['remove'])){
 
    <?php
       $select_likes = $conn->prepare("SELECT * FROM `likes` WHERE user_id = ?");
-      $select_likes->execute([$user_id]);
-      if($select_likes->rowCount() > 0){
-         while($fetch_likes = $select_likes->fetch(PDO::FETCH_ASSOC)){
+$select_likes->execute([$user_id]);
+if ($select_likes->rowCount() > 0) {
+    while ($fetch_likes = $select_likes->fetch(PDO::FETCH_ASSOC)) {
+        $select_contents = $conn->prepare("SELECT * FROM `content` WHERE id = ? ORDER BY date DESC");
+        $select_contents->execute([$fetch_likes['content_id']]);
 
-            $select_contents = $conn->prepare("SELECT * FROM `content` WHERE id = ? ORDER BY date DESC");
-            $select_contents->execute([$fetch_likes['content_id']]);
-
-            if($select_contents->rowCount() > 0){
-               while($fetch_contents = $select_contents->fetch(PDO::FETCH_ASSOC)){
-
-               $select_tutors = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-               $select_tutors->execute([$fetch_contents['tutor_id']]);
-               $fetch_tutor = $select_tutors->fetch(PDO::FETCH_ASSOC);
-   ?>
+        if ($select_contents->rowCount() > 0) {
+            while ($fetch_contents = $select_contents->fetch(PDO::FETCH_ASSOC)) {
+                $select_tutors = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+                $select_tutors->execute([$fetch_contents['tutor_id']]);
+                $fetch_tutor = $select_tutors->fetch(PDO::FETCH_ASSOC);
+                ?>
    <div class="box">
       <div class="tutor">
          <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -92,14 +88,14 @@ if(isset($_POST['remove'])){
    </div>
    <?php
             }
-         }else{
-            echo '<p class="emtpy">content was not found!</p>';         
-         }
-      }
-   }else{
-      echo '<p class="empty">nothing added to likes yet!</p>';
-   }
-   ?>
+        } else {
+            echo '<p class="emtpy">content was not found!</p>';
+        }
+    }
+} else {
+    echo '<p class="empty">nothing added to likes yet!</p>';
+}
+?>
 
    </div>
 

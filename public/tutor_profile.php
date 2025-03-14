@@ -2,40 +2,38 @@
 
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
 }
 
-if(isset($_POST['tutor_fetch'])){
+if (isset($_POST['tutor_fetch'])) {
+    $tutor_email = $_POST['tutor_email'];
+    $tutor_email = filter_var($tutor_email, FILTER_SANITIZE_STRING);
+    $select_tutor = $conn->prepare('SELECT * FROM `tutors` WHERE email = ?');
+    $select_tutor->execute([$tutor_email]);
 
-   $tutor_email = $_POST['tutor_email'];
-   $tutor_email = filter_var($tutor_email, FILTER_SANITIZE_STRING);
-   $select_tutor = $conn->prepare('SELECT * FROM `tutors` WHERE email = ?');
-   $select_tutor->execute([$tutor_email]);
+    $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+    $tutor_id = $fetch_tutor['id'];
 
-   $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-   $tutor_id = $fetch_tutor['id'];
+    $count_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
+    $count_playlists->execute([$tutor_id]);
+    $total_playlists = $count_playlists->rowCount();
 
-   $count_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
-   $count_playlists->execute([$tutor_id]);
-   $total_playlists = $count_playlists->rowCount();
+    $count_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
+    $count_contents->execute([$tutor_id]);
+    $total_contents = $count_contents->rowCount();
 
-   $count_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
-   $count_contents->execute([$tutor_id]);
-   $total_contents = $count_contents->rowCount();
+    $count_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
+    $count_likes->execute([$tutor_id]);
+    $total_likes = $count_likes->rowCount();
 
-   $count_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
-   $count_likes->execute([$tutor_id]);
-   $total_likes = $count_likes->rowCount();
-
-   $count_comments = $conn->prepare("SELECT * FROM `comments` WHERE tutor_id = ?");
-   $count_comments->execute([$tutor_id]);
-   $total_comments = $count_comments->rowCount();
-
-}else{
-   header('location:teachers.php');
+    $count_comments = $conn->prepare("SELECT * FROM `comments` WHERE tutor_id = ?");
+    $count_comments->execute([$tutor_id]);
+    $total_comments = $count_comments->rowCount();
+} else {
+    header('location:teachers.php');
 }
 
 ?>
@@ -92,15 +90,15 @@ if(isset($_POST['tutor_fetch'])){
 
       <?php
          $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ? AND status = ?");
-         $select_courses->execute([$tutor_id, 'active']);
-         if($select_courses->rowCount() > 0){
-            while($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)){
-               $course_id = $fetch_course['id'];
+$select_courses->execute([$tutor_id, 'active']);
+if ($select_courses->rowCount() > 0) {
+    while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
+        $course_id = $fetch_course['id'];
 
-               $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-               $select_tutor->execute([$fetch_course['tutor_id']]);
-               $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-      ?>
+        $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+        $select_tutor->execute([$fetch_course['tutor_id']]);
+        $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+        ?>
       <div class="box">
          <div class="tutor">
             <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -111,18 +109,18 @@ if(isset($_POST['tutor_fetch'])){
          </div>
          <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
-         <?php if($user_id != ''){ ?>
+         <?php if ($user_id != '') { ?>
             <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">view playlist</a>
          <?php } else { ?>
             <a href="login.php" class="inline-btn home-btn">Login to view</a>
          <?php } ?>
       </div>
       <?php
-         }
-      }else{
-         echo '<p class="empty">no courses added yet!</p>';
-      }
-      ?>
+    }
+} else {
+    echo '<p class="empty">no courses added yet!</p>';
+}
+?>
 
    </div>
 

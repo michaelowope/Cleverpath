@@ -2,38 +2,37 @@
 
 include '../../config/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
-   $tutor_id = $_COOKIE['tutor_id'];
-}else{
-   $tutor_id = '';
-   header('location:login.php');
+if (isset($_COOKIE['tutor_id'])) {
+    $tutor_id = $_COOKIE['tutor_id'];
+} else {
+    $tutor_id = '';
+    header('location:login.php');
 }
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
+    $id = unique_id();
+    $status = $_POST['status'];
+    $status = filter_var($status, FILTER_SANITIZE_STRING);
+    $title = $_POST['title'];
+    $title = filter_var($title, FILTER_SANITIZE_STRING);
+    $description = $_POST['description'];
+    $description = filter_var($description, FILTER_SANITIZE_STRING);
+    $playlist = $_POST['playlist'];
+    $playlist = filter_var($playlist, FILTER_SANITIZE_STRING);
+    $level = $_POST['level'];
+    $level = filter_var($level, FILTER_SANITIZE_STRING);
 
-   $id = unique_id();
-   $status = $_POST['status'];
-   $status = filter_var($status, FILTER_SANITIZE_STRING);
-   $title = $_POST['title'];
-   $title = filter_var($title, FILTER_SANITIZE_STRING);
-   $description = $_POST['description'];
-   $description = filter_var($description, FILTER_SANITIZE_STRING);
-   $playlist = $_POST['playlist'];
-   $playlist = filter_var($playlist, FILTER_SANITIZE_STRING);
-   $level = $_POST['level'];
-   $level = filter_var($level, FILTER_SANITIZE_STRING);
+    $file = $_FILES['file']['name'];
+    $file = filter_var($file, FILTER_SANITIZE_STRING);
+    $file_ext = pathinfo($file, PATHINFO_EXTENSION);
+    $rename_file = unique_id().'.'.$file_ext;
+    $file_tmp_name = $_FILES['file']['tmp_name'];
+    $file_folder = '../uploads/'.$rename_file;
 
-   $file = $_FILES['file']['name'];
-   $file = filter_var($file, FILTER_SANITIZE_STRING);
-   $file_ext = pathinfo($file, PATHINFO_EXTENSION);
-   $rename_file = unique_id().'.'.$file_ext;
-   $file_tmp_name = $_FILES['file']['tmp_name'];
-   $file_folder = '../uploads/'.$rename_file;
-
-   $add_playlist = $conn->prepare("INSERT INTO `content`(id, tutor_id, playlist_id, title, description, file, status, level) VALUES(?,?,?,?,?,?,?,?)");
-   $add_playlist->execute([$id, $tutor_id, $playlist, $title, $description, $rename_file, $status, $level]);
-   move_uploaded_file($file_tmp_name, $file_folder);
-   $message[] = 'new course uploaded!';
+    $add_playlist = $conn->prepare("INSERT INTO `content`(id, tutor_id, playlist_id, title, description, file, status, level) VALUES(?,?,?,?,?,?,?,?)");
+    $add_playlist->execute([$id, $tutor_id, $playlist, $title, $description, $rename_file, $status, $level]);
+    move_uploaded_file($file_tmp_name, $file_folder);
+    $message[] = 'new course uploaded!';
 }
 
 ?>
@@ -85,19 +84,19 @@ if(isset($_POST['submit'])){
          <option value="" disabled selected>--Select playlist</option>
          <?php
          $select_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
-         $select_playlists->execute([$tutor_id]);
-         if($select_playlists->rowCount() > 0){
-            while($fetch_playlist = $select_playlists->fetch(PDO::FETCH_ASSOC)){
-         ?>
+$select_playlists->execute([$tutor_id]);
+if ($select_playlists->rowCount() > 0) {
+    while ($fetch_playlist = $select_playlists->fetch(PDO::FETCH_ASSOC)) {
+        ?>
          <option value="<?= $fetch_playlist['id']; ?>"><?= $fetch_playlist['title']; ?></option>
          <?php
-            }
-         ?>
+    }
+    ?>
          <?php
-         }else{
-            echo '<option value="" disabled>no playlist created yet!</option>';
-         }
-         ?>
+} else {
+    echo '<option value="" disabled>no playlist created yet!</option>';
+}
+?>
       </select>
       <p>select file <span>*</span></p>
       <input type="file" name="file" accept="video/*,.pdf" required class="box">

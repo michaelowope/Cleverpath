@@ -2,10 +2,10 @@
 
 include '../config/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+} else {
+    $user_id = '';
 }
 
 // Default pagination settings
@@ -95,14 +95,14 @@ $select_courses->execute();
 
    <div class="box-container">
       <?php
-         if($select_courses->rowCount() > 0){
-            while($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)){
-               $course_id = $fetch_course['id'];
+         if ($select_courses->rowCount() > 0) {
+             while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
+                 $course_id = $fetch_course['id'];
 
-               $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = :tutor_id");
-               $select_tutor->execute(['tutor_id' => $fetch_course['tutor_id']]);
-               $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-      ?>
+                 $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = :tutor_id");
+                 $select_tutor->execute(['tutor_id' => $fetch_course['tutor_id']]);
+                 $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+                 ?>
       <div class="box">
          <div class="tutor">
             <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -113,18 +113,18 @@ $select_courses->execute();
          </div>
          <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
-         <?php if($user_id != ''){ ?>
+         <?php if ($user_id != '') { ?>
             <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">View Course</a>
          <?php } else { ?>
             <a href="login.php" class="inline-btn home-btn">Login to view</a>
          <?php } ?>
       </div>
       <?php
-            }
-         }else{
-            echo '<p class="empty">No courses found!</p>';
+             }
+         } else {
+             echo '<p class="empty">No courses found!</p>';
          }
-      ?>
+?>
    </div>
 
    <!-- Pagination Navigation -->
