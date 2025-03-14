@@ -1,0 +1,22 @@
+{
+    "name": "micha/cleverpath",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Micha\\Cleverpath\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "michael owope",
+            "email": "michaelowope@gmail.com"
+        }
+    ],
+    "scripts": {
+        "start": "php -S localhost:3000 -t public"
+    },
+    "require": {
+        "cboden/ratchet": "^0.4.4",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
