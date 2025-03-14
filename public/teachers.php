@@ -16,7 +16,7 @@ if (isset($_COOKIE['user_id'])) {
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>teachers</title>
+   <title>Teachers</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -36,17 +36,19 @@ if (isset($_COOKIE['user_id'])) {
    <h1 class="heading">expert teachers</h1>
 
    <form action="search_tutor.php" method="post" class="search-tutor">
-      <input type="text" name="search_tutor" maxlength="100" placeholder="search teacher..." required>
+      <input type="text" name="search_tutor" maxlength="100" placeholder="Search teacher..." required>
       <button type="submit" name="search_tutor_btn" class="fas fa-search"></button>
    </form>
 
    <div class="box-container">
+      <?php if (empty($user_id)) { ?>
+         <div class="box offer">
+            <h3>Inspire & Educate: Become a Teacher Today!</h3>
+            <p>Empower students with your expertise. Join our platform and start teaching today!</p>
+            <a href="admin/register.php" class="inline-btn">get started</a>
+         </div>
+      <?php } ?>
 
-      <div class="box offer">
-         <h3>Inspire & Educate: Become a Teacher Today!</h3>
-         <p>Empower students with your expertise. Join our platform and start teaching today!</p>
-         <a href="admin/register.php" class="inline-btn">get started</a>
-      </div>
 
       <?php
          $select_tutors = $conn->prepare("SELECT * FROM `tutors`");
@@ -94,41 +96,9 @@ if ($select_tutors->rowCount() > 0) {
     echo '<p class="empty">No teachers found!</p>';
 }
 ?>
-
    </div>
 
 </section>
-
-<!-- teachers section ends -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <?php include 'components/footer.php'; ?>    
 

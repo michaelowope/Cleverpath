@@ -116,9 +116,9 @@ if (isset($message) && is_array($message)) {
       <?php if (!empty($user_id)) { ?>
          <a href="courses.php"><i class="fas fa-graduation-cap"></i><span>Courses</span></a>
       <?php } ?>
-      <?php if (empty($user_id)) { ?>
-         <a href="teachers.php"><i class="fas fa-chalkboard-user"></i><span>Teachers</span></a>
-      <?php } ?>
+      <a href="teachers.php"><i class="fas fa-chalkboard-user"></i><span>Teachers</span></a>
+      <!-- <?php if (empty($user_id)) { ?>
+      <?php } ?> -->
       <a href="contact.php"><i class="fas fa-headset"></i><span>Contact Us</span></a>
    </nav>
 
