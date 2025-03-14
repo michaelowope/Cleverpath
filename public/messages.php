@@ -33,134 +33,13 @@ if (!$friend) {
     <title>Chat with <?= htmlspecialchars($friend['name']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!-- <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .chat-container {
-            max-width: 600px;
-            margin: 50px auto;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 80vh;
-        }
-        .chat-header {
-            background: #444ead;
-            color: white;
-            padding: 0.5rem 1rem;
-            display: flex;
-            align-items: center;
-        }
-        .chat-header img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .chat-messages {
-            flex: 1;
-            padding: 0.8rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .message-pvp {
-            max-width: 80%;
-            padding: 0.65rem 0.8rem;
-            margin: 5px 0;
-            border-radius: 1rem;
-            word-wrap: break-word;
-        }
-        .sent {
-            background: #444ead;
-            color: white;
-            align-self: flex-end;
-        }
-        .received {
-            background: #ddd;
-            color: black;
-            align-self: flex-start;
-        }
-        .message img {
-            max-width: 100px;
-            border-radius: 5px;
-        }
-        .chat-input {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #fff;
-            border-top: 1px solid #ddd;
-            gap: 0.4rem;
-        }
-        .chat-input input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .chat-input input[type="file"] {
-            display: none;
-        }
-        .chat-input label {
-            cursor: pointer;
-            font-size: 20px;
-            color: #444ead;
-        }
-        .chat-input button {
-            background: #444ead;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .chat-input button:hover {
-            background: #363b96;
-        }
-
-        .file-preview {
-            display: none;
-            align-items: center;
-            padding: 8px 10px;
-            background: #f1f1f1;
-            border-radius: 0.5rem;
-            border: 1px solid #ccc;
-            max-width: 300px;
-        }
-
-        .file-preview span {
-            font-size: 14px;
-            color: #333;
-            word-break: break-all;
-            margin-right: 0.5rem;
-        }
-
-        .file-preview .remove-file {
-            cursor: pointer;
-            color: red;
-            font-weight: bold;
-            margin-left: auto;
-            border-radius: 5px;
-        }
-
-        .download-file {
-            display: block;
-            color: var(--white) !important;
-        }
-    </style> -->
 </head>
 <body>
+<?php include 'components/user_header.php'; ?>
 
 <div class="chat-container">
     <div class="chat-header">
+        <a href="chat.php" class="btn"><i class="fa-solid fa-arrow-left"></i></a>
         <img src="uploads/<?= $friend['image']; ?>" alt="Friend">
         <h2><?= htmlspecialchars($friend['name']); ?></h2>
     </div>
@@ -182,6 +61,8 @@ if (!$friend) {
         <button type="submit"><i class="fas fa-paper-plane"></i></button>
     </form>
 </div>
+
+<script src="js/script.js"></script>
 
 <script>
     const ws = new WebSocket("ws://localhost:8080");
@@ -217,11 +98,11 @@ if (!$friend) {
     function displayMessage(senderId, message, file) {
         const chatMessages = document.getElementById("chat-messages");
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message-pvp", senderId == <?= json_encode($user_id); ?> ? "sent" : "received");
+        messageDiv.classList.add("message", senderId == <?= json_encode($user_id); ?> ? "sent" : "received");
         
         // Display message text
         if (message) {
-            messageDiv.innerHTML += `<span>${message}</span>`;
+            messageDiv.innerHTML += `<p>${message}</p>`;
         }
 
         // Display file if exists
@@ -231,7 +112,6 @@ if (!$friend) {
             fileDownload.href = "/uploads/" + file;
             fileDownload.download = file;
             fileDownload.innerText = "Download File";
-            
             messageDiv.appendChild(fileDownload);
         }
 

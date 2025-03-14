@@ -27,9 +27,9 @@ foreach ($messages as $message) {
     $is_sent = ($message['sender_id'] == $user_id);
     $message_class = $is_sent ? 'sent' : 'received';
     ?>
-    <div class="message-pvp <?= $message_class; ?>">
+    <div class="message <?= $message_class; ?>">
         <?php if (!empty($message['message'])): ?>
-            <span><?= htmlspecialchars($message['message']); ?></span>
+            <p><?= htmlspecialchars($message['message']); ?></p>
         <?php endif; ?>
         
         <?php if (!empty($message['file'])): ?>
