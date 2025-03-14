@@ -1465,7 +1465,18 @@ section{
 
 
 
+.back-btn-container {
+   width: 100%;
+   margin-bottom: 1rem;
+}
 
+.back-btn-container a {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   width: fit-content;
+   padding: 0.35rem 0.65rem;  
+}
 
 
 #dropdown {

@@ -1,5 +1,4 @@
 <?php
-
 include '../config/connect.php';
 
 if (isset($_COOKIE['user_id'])) {
@@ -35,9 +34,7 @@ if (isset($_POST['tutor_fetch'])) {
 } else {
     header('location:teachers.php');
 }
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +42,7 @@ if (isset($_POST['tutor_fetch'])) {
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>tutor's profile</title>
+   <title>Teacher Profile</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -58,12 +55,14 @@ if (isset($_POST['tutor_fetch'])) {
 
 <?php include 'components/user_header.php'; ?>
 
-<!-- teachers profile section starts  -->
-
+<!-- Teacher Profile Section Starts -->
 <section class="tutor-profile">
+   <!-- Back to Teachers Button -->
+   <div class="back-btn-container">
+       <a href="teachers.php" class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
 
-   <h1 class="heading">profile details</h1>
-
+   <h1 class="heading">Profile Details</h1>
    <div class="details">
       <div class="tutor">
          <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -71,34 +70,30 @@ if (isset($_POST['tutor_fetch'])) {
          <span><?= $fetch_tutor['department']; ?></span>
       </div>
       <div class="flex">
-         <p>total playlists : <span><?= $total_playlists; ?></span></p>
-         <p>total videos : <span><?= $total_contents; ?></span></p>
-         <p>total likes : <span><?= $total_likes; ?></span></p>
-         <p>total comments : <span><?= $total_comments; ?></span></p>
+         <p>Total Playlists : <span><?= $total_playlists; ?></span></p>
+         <p>Total File : <span><?= $total_contents; ?></span></p>
+         <p>Total Likes : <span><?= $total_likes; ?></span></p>
       </div>
    </div>
-
+   
 </section>
+<!-- Teacher Profile Section Ends -->
 
-<!-- teachers profile section ends -->
-
+<!-- Latest Courses Section Starts -->
 <section class="courses">
-
-   <h1 class="heading">latest course</h1>
-
+   <h1 class="heading">Latest Course</h1>
    <div class="box-container">
-
       <?php
          $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ? AND status = ?");
-$select_courses->execute([$tutor_id, 'active']);
-if ($select_courses->rowCount() > 0) {
-    while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
-        $course_id = $fetch_course['id'];
-
-        $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
-        $select_tutor->execute([$fetch_course['tutor_id']]);
-        $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-        ?>
+         $select_courses->execute([$tutor_id, 'active']);
+         if ($select_courses->rowCount() > 0) {
+             while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
+                 $course_id = $fetch_course['id'];
+                 
+                 $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+                 $select_tutor->execute([$fetch_course['tutor_id']]);
+                 $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+                 ?>
       <div class="box">
          <div class="tutor">
             <img src="uploads/<?= $fetch_tutor['image']; ?>" alt="">
@@ -110,34 +105,22 @@ if ($select_courses->rowCount() > 0) {
          <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
          <?php if ($user_id != '') { ?>
-            <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">view playlist</a>
+            <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">View Playlist</a>
          <?php } else { ?>
             <a href="login.php" class="inline-btn home-btn">Login to view</a>
          <?php } ?>
       </div>
       <?php
-    }
-} else {
-    echo '<p class="empty">no courses added yet!</p>';
-}
-?>
-
+             }
+         } else {
+             echo '<p class="empty">No courses added yet!</p>';
+         }
+      ?>
    </div>
-
 </section>
+<!-- Latest Courses Section Ends -->
 
-<!-- courses section ends -->
-
-
-
-
-
-
-
-
-
-
-<?php include 'components/footer.php'; ?>    
+<?php include 'components/footer.php'; ?>
 
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
