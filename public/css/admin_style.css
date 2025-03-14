@@ -1021,7 +1021,7 @@ section{
    color: var(--black);
    font-size: 2rem;
    margin-top: 2rem;
-   z-index: 999;
+   z-index: 100;
 }
 
 .footer span{

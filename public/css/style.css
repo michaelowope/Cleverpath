@@ -1489,7 +1489,7 @@ section{
    color: var(--black);
    font-size: 2rem;
    margin-top: 1.5rem;
-   z-index: 1000;
+   z-index: 100;
    /* padding-bottom: 9.5rem; */
 }
 
