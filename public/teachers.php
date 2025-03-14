@@ -74,9 +74,9 @@ $select_tutors->execute();
               $count_likes->execute([$tutor_id]);
               $total_likes = $count_likes->rowCount();
 
-              $count_comments = $conn->prepare("SELECT * FROM comments WHERE tutor_id = ?");
-              $count_comments->execute([$tutor_id]);
-              $total_comments = $count_comments->rowCount();
+            //   $count_comments = $conn->prepare("SELECT * FROM comments WHERE tutor_id = ?");
+            //   $count_comments->execute([$tutor_id]);
+            //   $total_comments = $count_comments->rowCount();
               ?>
               <div class="box">
                  <div class="tutor">
@@ -89,7 +89,6 @@ $select_tutors->execute();
                  <p>Playlists: <span><?= $total_playlists; ?></span></p>
                  <p>Total Content: <span><?= $total_contents; ?></span></p>
                  <p>Total Likes: <span><?= $total_likes; ?></span></p>
-                 <p>Total Comments: <span><?= $total_comments; ?></span></p>
                  <form action="tutor_profile.php" method="post">
                     <input type="hidden" name="tutor_email" value="<?= $fetch_tutor['email']; ?>">
                     <input type="submit" value="View Profile" name="tutor_fetch" class="inline-btn">
