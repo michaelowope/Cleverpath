@@ -1056,6 +1056,10 @@ section{
    margin: 0;
 }
 
+.edit-comment textarea {
+   text-align: left;
+}
+
 .edit-comment form{
    background-color: var(--white);
    border-radius: .5rem;
@@ -1803,7 +1807,7 @@ section{
    font-size: 1.6rem;
    border: var(--border);
    border-radius: .5rem;
-   resize: vertical;
+   resize: none;
    background-color: var(--light-bg);
    color: var(--black);
 }

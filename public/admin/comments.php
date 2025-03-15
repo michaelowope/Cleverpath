@@ -48,6 +48,9 @@ if (isset($_POST['delete_comment'])) {
    
 
 <section class="comments">
+    <div class="back-btn-container">
+       <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
 
    <h1 class="heading">user comments</h1>
 

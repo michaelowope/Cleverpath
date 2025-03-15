@@ -80,6 +80,9 @@ if (isset($_POST['delete_comment'])) {
 <?php include '../components/admin_header.php'; ?>
 
 <section class="view-content">
+    <div class="back-btn-container">
+       <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
 
    <?php
       $select_content = $conn->prepare("SELECT * FROM `content` WHERE id = ? AND tutor_id = ?");

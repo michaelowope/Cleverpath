@@ -135,7 +135,7 @@ if ($select_content->rowCount() > 0) {
         $file_name = $fetch_content['file'];
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         ?>
-      <a href="watch_video.php?get_id=<?= $fetch_content['id']; ?>" class="box">
+      <a href="view_content.php?get_id=<?= $fetch_content['id']; ?>" class="box">
          <i class="fas fa-play"></i>
          <div class="thumb">
             <?php if (in_array($file_ext, ['mp4', 'avi', 'mov'])): ?>

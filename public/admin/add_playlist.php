@@ -56,20 +56,22 @@ if (isset($_POST['submit'])) {
 <?php include '../components/admin_header.php'; ?>
    
 <section class="playlist-form">
-
+   <div class="back-btn-container">
+       <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
    <h1 class="heading">create playlist</h1>
 
    <form action="" method="post" enctype="multipart/form-data">
       <p>playlist status <span>*</span></p>
       <select name="status" class="box" required>
-         <option value="" selected disabled>-- select status</option>
-         <option value="active">active</option>
-         <option value="deactive">deactive</option>
+         <option value="" selected disabled>-- Select status</option>
+         <option value="active">Active</option>
+         <option value="deactive">Deactive</option>
       </select>
       <p>playlist title <span>*</span></p>
-      <input type="text" name="title" maxlength="100" required placeholder="enter playlist title" class="box">
+      <input type="text" name="title" maxlength="100" required placeholder="Enter Playlist Title" class="box">
       <p>playlist description <span>*</span></p>
-      <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
+      <textarea name="description" class="box" required placeholder="Write Description" maxlength="1000" cols="30" rows="10"></textarea>
       <p>playlist thumbnail <span>*</span></p>
       <input type="file" name="image" accept="image/*" required class="box">
       <input type="submit" value="create playlist" name="submit" class="btn">

@@ -74,7 +74,7 @@ if (isset($_POST['update_now'])) {
            $fetch_edit_comment = $verify_comment->fetch(PDO::FETCH_ASSOC);
            ?>
 <section class="edit-comment">
-   <h1 class="heading">edti comment</h1>
+   <h1 class="heading">edit comment</h1>
    <form action="" method="post">
       <input type="hidden" name="update_id" value="<?= $fetch_edit_comment['id']; ?>">
       <textarea name="update_box" class="box" maxlength="1000" required placeholder="please enter your comment" cols="30" rows="10"><?= $fetch_edit_comment['comment']; ?></textarea>
@@ -113,7 +113,7 @@ if ($select_comments->rowCount() > 0) {
       <div class="box" style="<?php if ($fetch_comment['user_id'] == $user_id) {
           echo 'order:-1;';
       } ?>">
-         <div class="content"><span><?= $fetch_comment['date']; ?></span><p> - <?= $fetch_content['title']; ?> - </p><a href="watch_video.php?get_id=<?= $fetch_content['id']; ?>">view content</a></div>
+         <div class="content"><span><?= $fetch_comment['date']; ?></span><p> - <?= $fetch_content['title']; ?> - </p><a href="view_content.php?get_id=<?= $fetch_content['id']; ?>">view content</a></div>
          <p class="text"><?= $fetch_comment['comment']; ?></p>
          <?php
             if ($fetch_comment['user_id'] == $user_id) {

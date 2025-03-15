@@ -90,19 +90,23 @@ if (!empty($message)) {
 ?>
 
 <section class="video-form">
+    <div class="back-btn-container">
+       <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
+
    <h1 class="heading">upload content</h1>
 
    <form action="" method="post" enctype="multipart/form-data">
-      <p>File status <span>*</span></p>
+      <p>Content status <span>*</span></p>
       <select name="status" class="box" required>
-         <option value="" selected disabled>-- select status</option>
+         <option value="" selected disabled>-- Select status</option>
          <option value="active">active</option>
          <option value="deactive">deactive</option>
       </select>
-      <p>File title <span>*</span></p>
-      <input type="text" name="title" maxlength="100" required placeholder="enter File title" class="box">
-      <p>File description <span>*</span></p>
-      <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
+      <p>Content title <span>*</span></p>
+      <input type="text" name="title" maxlength="100" required placeholder="Enter Content title" class="box">
+      <p>Content description <span>*</span></p>
+      <textarea name="description" class="box" required placeholder="Write Description" maxlength="1000" cols="30" rows="10"></textarea>
       <p>Course Level <span>*</span></p>
       <select name="level" class="box" required>
          <option value="" disabled selected>--Select Level</option>
@@ -130,7 +134,7 @@ if (!empty($message)) {
       </select>
       <p>select file <span>*</span></p>
       <input type="file" name="file" accept="video/*,.pdf" required class="box">
-      <input type="submit" value="Upload File" name="submit" class="btn">
+      <input type="submit" value="Upload Content" name="submit" class="btn">
    </form>
 </section>
 
