@@ -5,6 +5,9 @@ session_start();
 require __DIR__ . '/../vendor/autoload.php'; 
 include '../config/connect.php';
 
+use GuzzleHttp\Client;
+use Smalot\PdfParser\Parser;
+
 // ------------------------------------------------------
 // A) Fetch the user data (if logged in via cookie)
 // ------------------------------------------------------
@@ -37,250 +40,54 @@ if (!isset($_SESSION['quiz'])) {
     $_SESSION['quiz'] = [];
 }
 
-/* ------------------------------------------------------------------
-   1) If we haven't generated a quiz yet for this PDF, do the 2-step
-      approach: (A) Upload the PDF, (B) Generate quiz via fileUri.
-   ------------------------------------------------------------------ */
-if (!isset($_SESSION['quiz'][$pdf_id])) {
+// Instantiate Guzzle client (disable SSL verification if needed)
+$client = new Client([
+    'verify' => false, // For debugging only; remove in production!
+]);
+$parser = new Parser();
 
-    // A) Locate the PDF file for this content in your uploads folder
-    $get_pdf = $conn->prepare("SELECT file FROM content WHERE id = ? LIMIT 1");
-    $get_pdf->execute([$pdf_id]);
+$get_pdf = $conn->prepare("SELECT file FROM content WHERE id = ? LIMIT 1");
+$get_pdf->execute([$pdf_id]);
 
-    if ($get_pdf->rowCount() === 0) {
-        echo "No PDF found for this content.";
-        exit;
-    }
-    $fetch_pdf   = $get_pdf->fetch(PDO::FETCH_ASSOC);
-    $pdfFilename = $fetch_pdf['file']; // e.g. "myfile.pdf"
+if ($get_pdf->rowCount() === 0) {
+    echo "No PDF found for this content.";
+    exit;
+}
+$fetch_pdf   = $get_pdf->fetch(PDO::FETCH_ASSOC);
+$pdfFilename = $fetch_pdf['file'];
 
-    // Adjust path as needed (here we assume the "uploads" folder is in the same directory as this file)
-    $pdfPath = __DIR__ . '/uploads/' . $pdfFilename;
+$pdfPath = __DIR__ . '/uploads/' . $pdfFilename;
     if (!file_exists($pdfPath)) {
         echo "PDF file not found on server. Looking at: " . $pdfPath;
-        exit;
-    }
+    exit;
+}
 
-    // ----------------------------------------------------------------
-    // (A) UPLOAD PDF -> Get fileUri
-    // ----------------------------------------------------------------
-    $uploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files?key={$geminiApiKey}";
-    $pdfBinary = file_get_contents($pdfPath);
-    $numBytes  = filesize($pdfPath);
-    $mimeType  = "application/pdf";
+$uploadUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={$geminiApiKey}";
+$pdf =  $parser->parseFile($pdfPath);
+$pdftext = $pdf->getText();
 
-    // JSON part (telling Gemini the display name)
-    $jsonPart = json_encode([
-        "file" => [
-            "display_name" => $pdfFilename
-        ]
-    ]);
-
-    // Build a multipart/related body with two parts (JSON metadata and PDF binary)
-    $boundary = "----Boundary" . uniqid();
-    $body  = "--$boundary\r\n";
-    $body .= "Content-Type: application/json; charset=UTF-8\r\n\r\n";
-    $body .= $jsonPart . "\r\n";
-    $body .= "--$boundary\r\n";
-    $body .= "Content-Type: $mimeType\r\n";
-    $body .= "Content-Length: $numBytes\r\n";
-    $body .= "Content-Transfer-Encoding: binary\r\n\r\n";
-    $body .= $pdfBinary . "\r\n";
-    $body .= "--$boundary--\r\n";
-
-    $ch = curl_init($uploadUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-
-    $uploadHeaders = [
-        "X-Goog-Upload-Command: start, upload, finalize",
-        "X-Goog-Upload-Header-Content-Length: $numBytes",
-        "X-Goog-Upload-Header-Content-Type: $mimeType",
-        "Content-Type: multipart/related; boundary=$boundary"
-    ];
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $uploadHeaders);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    // Enable verbose logging for debugging
-    curl_setopt($ch, CURLOPT_VERBOSE, true);
-    $uploadVerbose = fopen('php://temp', 'w+');
-    curl_setopt($ch, CURLOPT_STDERR, $uploadVerbose);
-
-    // Optional: disable SSL verification if needed
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
-    $uploadResponse = curl_exec($ch);
-    $curlErr        = curl_error($ch);
-    $httpCode       = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    rewind($uploadVerbose);
-    $verboseLog1 = stream_get_contents($uploadVerbose);
-    fclose($uploadVerbose);
-
-    // Debug output for upload step
-    echo "<h3>Upload Step Debug</h3>";
-    echo "<pre>HTTP Code: $httpCode\n";
-    echo "cURL Error: $curlErr\n";
-    echo "Verbose Log:\n" . htmlspecialchars($verboseLog1) . "</pre>";
-    echo "<pre>Raw Upload Response:\n" . htmlspecialchars($uploadResponse) . "</pre>";
-
-    if ($curlErr) {
-        echo "Gemini API Upload error: $curlErr";
-        exit;
-    }
-    if ($httpCode !== 200) {
-        echo "Upload step got HTTP code $httpCode, not 200.<br>Cannot proceed.";
-        exit;
-    }
-    $uploadJson = json_decode($uploadResponse, true);
-    if (!isset($uploadJson['file']['uri'])) {
-        echo "No fileUri returned from upload!<br>Response was: $uploadResponse";
-        exit;
-    }
-    $fileUri = $uploadJson['file']['uri'];
-
-    // ----------------------------------------------------------------
-    // (B) GENERATE QUIZ -> referencing fileUri
-    // ----------------------------------------------------------------
-    $generateUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={$geminiApiKey}";
-
-    $requestBody = [
-        "contents" => [
-            [
-              "role" => "user",
-              "parts" => [
+$payload = [
+    "contents" => [
+        [
+            "parts" => [
                 [
-                  "fileData" => [
-                    "fileUri"  => $fileUri,
-                    "mimeType" => "application/pdf"
-                  ]
-                ],
-                [
-                  "text" => "Generate EXACTLY 10 multiple-choice questions from this PDF, each with 4 options (A,B,C,D) and a single correct answer. Return valid JSON like: \n\n[\n  {\n    \"question\": \"...\",\n    \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"},\n    \"answer\": \"A\"\n  },\n  ...\n]\nNo extra text, just JSON!"
+                    "text" => "generate 10 quiz questions in json format, where the correct answer is provided from this: $pdftext",          
                 ]
-              ]
             ]
-        ],
-        "generationConfig" => [
-            "temperature" => 1,
-            "topK" => 40,
-            "topP" => 0.95,
-            "maxOutputTokens" => 8192,
-            "responseMimeType" => "text/plain"
         ]
-    ];
+    ]
+];
 
-    $jsonRequest = json_encode($requestBody);
+// Make the POST request with query parameters and JSON payload
+$response = $client->post($uploadUrl, [
+    'headers' => [
+        'Content-Type' => 'application/json'
+    ],
+    'json' => $payload
+]);
 
-    $ch2 = curl_init($generateUrl);
-    curl_setopt($ch2, CURLOPT_POST, true);
-    curl_setopt($ch2, CURLOPT_POSTFIELDS, $jsonRequest);
-    curl_setopt($ch2, CURLOPT_HTTPHEADER, [
-      'Content-Type: application/json'
-    ]);
-    curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-
-    // Enable verbose logging for generation step
-    curl_setopt($ch2, CURLOPT_VERBOSE, true);
-    $genVerbose = fopen('php://temp', 'w+');
-    curl_setopt($ch2, CURLOPT_STDERR, $genVerbose);
-
-    // Optional: disable SSL checks
-    curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 0);
-
-    $response2 = curl_exec($ch2);
-    $curlErr2  = curl_error($ch2);
-    $httpCode2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
-    curl_close($ch2);
-
-    rewind($genVerbose);
-    $verboseLog2 = stream_get_contents($genVerbose);
-    fclose($genVerbose);
-
-    // Debug output for generate step
-    echo "<h3>Generate Step Debug</h3>";
-    echo "<pre>HTTP Code: $httpCode2\n";
-    echo "cURL Error: $curlErr2\n";
-    echo "Verbose Log:\n" . htmlspecialchars($verboseLog2) . "</pre>";
-    echo "<pre>Raw Generate Response:\n" . htmlspecialchars($response2) . "</pre>";
-
-    if ($curlErr2) {
-        echo "Gemini API cURL error: $curlErr2";
-        exit;
-    }
-    if ($httpCode2 !== 200) {
-        echo "Generate step got HTTP code $httpCode2, not 200.<br>Cannot proceed.";
-        exit;
-    }
-
-    $responseData = json_decode($response2, true);
-    $modelText = "";
-    if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
-        $modelText = $responseData['candidates'][0]['content']['parts'][0]['text'];
-    } else if (isset($responseData['contents'][0]['parts'][0]['text'])) {
-        $modelText = $responseData['contents'][0]['parts'][0]['text'];
-    } else {
-        echo "No text returned from Gemini!<br>Response was: $response2";
-        exit;
-    }
-
-    // Attempt to parse the returned JSON
-    $quizData = json_decode($modelText, true);
-    if (empty($quizData) || !is_array($quizData)) {
-        $quizData = [
-          [
-            "question" => "Sample fallback question",
-            "options"  => [
-               "A" => "Option A",
-               "B" => "Option B",
-               "C" => "Option C",
-               "D" => "Option D"
-            ],
-            "answer"   => "A"
-          ]
-        ];
-    }
-
-    // Store the final quiz array in the session
-    $_SESSION['quiz'][$pdf_id] = $quizData;
-}
-
-/* ------------------------------------------------------------------
-   2) If user submitted answers, calculate the score
-   ------------------------------------------------------------------ */
-$score       = null;
-$totalQs     = 0;
-$quizResults = null;
-
-if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
-    // Force numeric indexes for safe arithmetic
-    $quizData = array_values($_SESSION['quiz'][$pdf_id]);
-    $totalQs  = count($quizData);
-    $score    = 0;
-    $quizResults = [];
-
-    for ($i = 0; $i < $totalQs; $i++) {
-        $userAnswer    = $_POST['answer_' . $i] ?? '';
-        $correctAnswer = $quizData[$i]['answer'] ?? '';
-        $isCorrect = (strtoupper($userAnswer) === strtoupper($correctAnswer));
-        if ($isCorrect) {
-            $score++;
-        }
-        $quizResults[] = [
-          'question'       => $quizData[$i]['question'] ?? '',
-          'user_answer'    => $userAnswer,
-          'correct_answer' => $correctAnswer,
-          'is_correct'     => $isCorrect
-        ];
-    }
-}
-
-/* ------------------------------------------------------------------
-   3) Display the quiz or results
-   ------------------------------------------------------------------ */
+$body = $response->getBody()->getContents();
+echo $body;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -293,7 +100,6 @@ if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
 </head>
 <body>
 
-<!-- Include the user header -->
 <?php include 'components/user_header.php'; ?>
 
 <h1>Quiz</h1>
@@ -324,6 +130,7 @@ if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
     <?php else: ?>
         <p>No questions available. Something went wrong!</p>
     <?php endif; ?>
+
 <?php elseif ($score !== null && $quizResults !== null): ?>
     <h2>Your Score: <?= $score; ?> / <?= $totalQs; ?></h2>
     <div>
