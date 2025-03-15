@@ -1048,7 +1048,7 @@ section{
 .comments .add-comment-form textarea {
    height: 120px;
    width: 100%;
-   resize: vertical;
+   resize: none;
    text-align: left;
 }
 
@@ -1807,7 +1807,7 @@ section{
    font-size: 1.6rem;
    border: var(--border);
    border-radius: .5rem;
-   resize: none;
+   resize: vertical;
    background-color: var(--light-bg);
    color: var(--black);
 }
