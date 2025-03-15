@@ -51,6 +51,9 @@ if (isset($_POST['remove'])) {
 <!-- courses section starts  -->
 
 <section class="liked-videos">
+    <div class="back-btn-container">
+       <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
+   </div>
 
    <h1 class="heading">liked videos</h1>
 

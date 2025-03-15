@@ -1517,7 +1517,8 @@ section{
    margin-bottom: 1rem;
 }
 
-.back-btn-container a {
+.back-btn-container a,
+.back-btn-container button {
    display: flex;
    align-items: center;
    gap: 0.5rem;
