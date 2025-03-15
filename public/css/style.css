@@ -813,7 +813,7 @@ section{
 .watch-content .content-details .title{
    font-size: 2rem;
    color: var(--black);
-   padding: 1.5rem 0;
+   padding: 1.5rem 0 0;
 }
 
 .watch-content .content-details .info{
@@ -821,6 +821,34 @@ section{
    gap: 2rem;
    padding-bottom: 1.5rem;
    border-bottom: var(--border);
+}
+
+.watch-content .content-details .description {
+   margin: 0 !important;
+   padding: 0 !important;
+   margin-bottom: 0.5rem !important;
+}
+
+.watch-content .content-details .flex {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 1.5rem;
+   font-size: 1.8rem;
+   padding-top: 1.5rem;
+   padding-bottom: 1rem;
+   margin-top: 0.5rem;
+}
+
+.watch-content .content-details .flex div{
+   background-color: var(--light-bg);
+   border-radius: .5rem;
+   padding: .5rem 1rem;
+}
+
+.watch-content .content-details .flex i{
+   margin-right: 1rem;
+   color: var(--main-color);
 }
 
 .watch-content .content-details .info p{
@@ -936,6 +964,7 @@ section{
    padding: 2rem;
    display: grid;
    gap: 2.5rem;
+   margin-top: 2rem;
 }
 
 .comments .show-comments .user{
@@ -1008,6 +1037,23 @@ section{
    width: 2rem;
    background-color: var(--light-bg);
    clip-path: polygon(50% 0%, 0% 100%, 100% 100%); 
+}
+
+.comments .add-comment-form {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+}
+
+.comments .add-comment-form textarea {
+   height: 120px;
+   width: 100%;
+   resize: vertical;
+   text-align: left;
+}
+
+.comments .add-comment-form button {
+   margin: 0;
 }
 
 .edit-comment form{
