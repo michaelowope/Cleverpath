@@ -114,7 +114,7 @@ $select_courses->execute();
          <img src="uploads/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
          <h3 class="title"><?= $fetch_course['title']; ?></h3>
          <?php if ($user_id != '') { ?>
-            <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">View Course</a>
+            <a href="playlist.php?get_id=<?= $course_id; ?>" class="inline-btn home-btn">View Playlist</a>
          <?php } else { ?>
             <a href="login.php" class="inline-btn home-btn">Login to view</a>
          <?php } ?>

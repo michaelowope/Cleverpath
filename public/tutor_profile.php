@@ -71,11 +71,10 @@ if (isset($_POST['tutor_fetch'])) {
       </div>
       <div class="flex">
          <p>Total Playlists : <span><?= $total_playlists; ?></span></p>
-         <p>Total File : <span><?= $total_contents; ?></span></p>
+         <p>Total Content : <span><?= $total_contents; ?></span></p>
          <p>Total Likes : <span><?= $total_likes; ?></span></p>
       </div>
    </div>
-   
 </section>
 <!-- Teacher Profile Section Ends -->
 

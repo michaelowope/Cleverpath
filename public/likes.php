@@ -82,8 +82,8 @@ if ($select_likes->rowCount() > 0) {
       <h3 class="title"><?= $fetch_contents['title']; ?></h3>
       <form action="" method="post" class="flex-btn">
          <input type="hidden" name="content_id" value="<?= $fetch_contents['id']; ?>">
-         <a href="watch_video.php?get_id=<?= $fetch_contents['id']; ?>" class="inline-btn">watch video</a>
-         <input type="submit" value="remove" class="inline-delete-btn" name="remove">
+         <a href="watch_video.php?get_id=<?= $fetch_contents['id']; ?>" class="inline-btn">View Content</a>
+         <input type="submit" value="Unlike" class="inline-delete-btn" name="remove">
       </form>
    </div>
    <?php
