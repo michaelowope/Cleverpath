@@ -54,7 +54,7 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     $fetch_pdf   = $get_pdf->fetch(PDO::FETCH_ASSOC);
     $pdfFilename = $fetch_pdf['file']; // e.g. "myfile.pdf"
 
-    // Make sure the file exists
+    // Adjust path as needed (here we assume the "uploads" folder is in the same directory as this file)
     $pdfPath = __DIR__ . '/uploads/' . $pdfFilename;
     if (!file_exists($pdfPath)) {
         echo "PDF file not found on server. Looking at: " . $pdfPath;
@@ -65,7 +65,6 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     // (A) UPLOAD PDF -> Get fileUri
     // ----------------------------------------------------------------
     $uploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files?key={$geminiApiKey}";
-
     $pdfBinary = file_get_contents($pdfPath);
     $numBytes  = filesize($pdfPath);
     $mimeType  = "application/pdf";
@@ -77,7 +76,7 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
         ]
     ]);
 
-    // We'll send a multipart/related body in a single request:
+    // Build a multipart/related body with two parts (JSON metadata and PDF binary)
     $boundary = "----Boundary" . uniqid();
     $body  = "--$boundary\r\n";
     $body .= "Content-Type: application/json; charset=UTF-8\r\n\r\n";
@@ -89,12 +88,10 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     $body .= $pdfBinary . "\r\n";
     $body .= "--$boundary--\r\n";
 
-    // cURL handle to upload the PDF
     $ch = curl_init($uploadUrl);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
 
-    // Headers from the example
     $uploadHeaders = [
         "X-Goog-Upload-Command: start, upload, finalize",
         "X-Goog-Upload-Header-Content-Length: $numBytes",
@@ -104,7 +101,7 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, $uploadHeaders);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    // (Optional) Make cURL verbose for debugging
+    // Enable verbose logging for debugging
     curl_setopt($ch, CURLOPT_VERBOSE, true);
     $uploadVerbose = fopen('php://temp', 'w+');
     curl_setopt($ch, CURLOPT_STDERR, $uploadVerbose);
@@ -113,19 +110,16 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
-    // Execute the upload
     $uploadResponse = curl_exec($ch);
     $curlErr        = curl_error($ch);
-    // HTTP status code
     $httpCode       = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    // Read cURL verbose logs
     rewind($uploadVerbose);
     $verboseLog1 = stream_get_contents($uploadVerbose);
     fclose($uploadVerbose);
 
-    // Print debug info:
+    // Debug output for upload step
     echo "<h3>Upload Step Debug</h3>";
     echo "<pre>HTTP Code: $httpCode\n";
     echo "cURL Error: $curlErr\n";
@@ -136,30 +130,26 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
         echo "Gemini API Upload error: $curlErr";
         exit;
     }
-
     if ($httpCode !== 200) {
         echo "Upload step got HTTP code $httpCode, not 200.<br>Cannot proceed.";
         exit;
     }
-
-    // We expect JSON with something like {"file":{"uri": "projects/..."}}
     $uploadJson = json_decode($uploadResponse, true);
     if (!isset($uploadJson['file']['uri'])) {
         echo "No fileUri returned from upload!<br>Response was: $uploadResponse";
         exit;
     }
-
     $fileUri = $uploadJson['file']['uri'];
 
     // ----------------------------------------------------------------
     // (B) GENERATE QUIZ -> referencing fileUri
     // ----------------------------------------------------------------
-    $generateUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={$geminiApiKey}";
+    $generateUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={$geminiApiKey}";
 
     $requestBody = [
         "contents" => [
             [
-              "role"  => "user",
+              "role" => "user",
               "parts" => [
                 [
                   "fileData" => [
@@ -168,16 +158,16 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
                   ]
                 ],
                 [
-                  "text" => "Generate EXACTLY 10 multiple-choice questions from this PDF, each with 4 options (A,B,C,D) and a single correct answer. Return valid JSON like: \n\n[\n  {\n    \"question\": \"...\",\n    \"options\": {\n      \"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"\n    },\n    \"answer\": \"A\"\n  },\n  ...\n]\nNo extra text, just JSON!"
+                  "text" => "Generate EXACTLY 10 multiple-choice questions from this PDF, each with 4 options (A,B,C,D) and a single correct answer. Return valid JSON like: \n\n[\n  {\n    \"question\": \"...\",\n    \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"},\n    \"answer\": \"A\"\n  },\n  ...\n]\nNo extra text, just JSON!"
                 ]
               ]
             ]
         ],
         "generationConfig" => [
-            "temperature"      => 1,
-            "topK"             => 40,
-            "topP"             => 0.95,
-            "maxOutputTokens"  => 8192,
+            "temperature" => 1,
+            "topK" => 40,
+            "topP" => 0.95,
+            "maxOutputTokens" => 8192,
             "responseMimeType" => "text/plain"
         ]
     ];
@@ -192,7 +182,7 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     ]);
     curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
 
-    // Debug
+    // Enable verbose logging for generation step
     curl_setopt($ch2, CURLOPT_VERBOSE, true);
     $genVerbose = fopen('php://temp', 'w+');
     curl_setopt($ch2, CURLOPT_STDERR, $genVerbose);
@@ -206,12 +196,11 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     $httpCode2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
     curl_close($ch2);
 
-    // Read gen step logs
     rewind($genVerbose);
     $verboseLog2 = stream_get_contents($genVerbose);
     fclose($genVerbose);
 
-    // Print debug info:
+    // Debug output for generate step
     echo "<h3>Generate Step Debug</h3>";
     echo "<pre>HTTP Code: $httpCode2\n";
     echo "cURL Error: $curlErr2\n";
@@ -228,30 +217,18 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
     }
 
     $responseData = json_decode($response2, true);
-
-    // We expect something like:
-    // {
-    //   "contents": [
-    //     {
-    //       "role": "model",
-    //       "parts": [
-    //         {"text": "..."} <-- the MCQ JSON
-    //       ]
-    //     }
-    //   ]
-    // }
-    $modelText = '';
-    if (isset($responseData['contents'][0]['parts'][0]['text'])) {
+    $modelText = "";
+    if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
+        $modelText = $responseData['candidates'][0]['content']['parts'][0]['text'];
+    } else if (isset($responseData['contents'][0]['parts'][0]['text'])) {
         $modelText = $responseData['contents'][0]['parts'][0]['text'];
     } else {
         echo "No text returned from Gemini!<br>Response was: $response2";
         exit;
     }
 
-    // Attempt to parse the JSON array
+    // Attempt to parse the returned JSON
     $quizData = json_decode($modelText, true);
-
-    // If the model didn't return a valid array, fallback
     if (empty($quizData) || !is_array($quizData)) {
         $quizData = [
           [
@@ -272,30 +249,26 @@ if (!isset($_SESSION['quiz'][$pdf_id])) {
 }
 
 /* ------------------------------------------------------------------
-   2) If the user just submitted answers, let's calculate the score
+   2) If user submitted answers, calculate the score
    ------------------------------------------------------------------ */
 $score       = null;
 $totalQs     = 0;
 $quizResults = null;
 
 if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
-    // Force numeric indexes so "$index+1" won't cause errors
+    // Force numeric indexes for safe arithmetic
     $quizData = array_values($_SESSION['quiz'][$pdf_id]);
-    
     $totalQs  = count($quizData);
     $score    = 0;
     $quizResults = [];
 
     for ($i = 0; $i < $totalQs; $i++) {
-        // The user’s answer
-        $userAnswer   = $_POST['answer_' . $i] ?? '';
+        $userAnswer    = $_POST['answer_' . $i] ?? '';
         $correctAnswer = $quizData[$i]['answer'] ?? '';
-
         $isCorrect = (strtoupper($userAnswer) === strtoupper($correctAnswer));
         if ($isCorrect) {
             $score++;
         }
-
         $quizResults[] = [
           'question'       => $quizData[$i]['question'] ?? '',
           'user_answer'    => $userAnswer,
@@ -306,7 +279,7 @@ if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
 }
 
 /* ------------------------------------------------------------------
-   3) Display the quiz or the results
+   3) Display the quiz or results
    ------------------------------------------------------------------ */
 ?>
 <!DOCTYPE html>
@@ -314,59 +287,44 @@ if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
 <head>
     <meta charset="UTF-8">
     <title>Quiz</title>
-
-    <!-- Your styles -->
     <link rel="stylesheet" href="css/style.css">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
 
-<!-- Include your user header -->
+<!-- Include the user header -->
 <?php include 'components/user_header.php'; ?>
 
 <h1>Quiz</h1>
 
 <?php if (isset($_SESSION['quiz'][$pdf_id]) && !$score): ?>
-    <!-- Show quiz form if no final score yet -->
-    <?php 
-    $quizData = array_values($_SESSION['quiz'][$pdf_id]); 
-    ?>
+    <?php $quizData = array_values($_SESSION['quiz'][$pdf_id]); ?>
     <?php if (!empty($quizData)): ?>
         <form method="post" action="">
         <?php foreach ($quizData as $index => $qData): ?>
             <div style="margin-bottom: 20px;">
                 <h3>Question <?= $index+1; ?>:</h3>
                 <p><?= htmlspecialchars($qData['question'] ?? ''); ?></p>
-
-                <?php
-                // "options": { "A": "...", "B": "...", ... }
-                if (!empty($qData['options']) && is_array($qData['options'])):
-                    foreach ($qData['options'] as $letter => $optText):
-                ?>
+                <?php if (!empty($qData['options']) && is_array($qData['options'])): ?>
+                    <?php foreach ($qData['options'] as $letter => $optText): ?>
                         <label>
                           <input type="radio" name="answer_<?= $index; ?>" value="<?= $letter; ?>" required>
                           <?= htmlspecialchars("$letter) $optText"); ?>
                         </label><br>
-                <?php
-                    endforeach;
-                else:
-                    echo "<p>No options found.</p>";
-                endif;
-                ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No options found.</p>
+                <?php endif; ?>
             </div>
             <hr>
         <?php endforeach; ?>
-
         <button type="submit" name="submit_quiz">Submit Quiz</button>
         </form>
     <?php else: ?>
         <p>No questions available. Something went wrong!</p>
     <?php endif; ?>
-
 <?php elseif ($score !== null && $quizResults !== null): ?>
-    <!-- Show final results -->
     <h2>Your Score: <?= $score; ?> / <?= $totalQs; ?></h2>
     <div>
     <?php foreach ($quizResults as $i => $result): ?>
@@ -383,19 +341,14 @@ if (isset($_POST['submit_quiz']) && isset($_SESSION['quiz'][$pdf_id])) {
         <hr>
     <?php endforeach; ?>
     </div>
-
-    <!-- Button to retake or re-generate a new quiz -->
     <form method="post">
         <button type="submit" name="refresh_quiz">Take Another Quiz</button>
     </form>
-
 <?php else: ?>
-    <!-- If no quiz data at all, or something's off -->
     <p>No quiz data. <a href="watch_video.php?get_id=<?= urlencode($pdf_id); ?>">Go back</a></p>
 <?php endif; ?>
 
 <?php
-// 4) If user clicked 'Take Another Quiz', clear session so we can generate a new quiz
 if (isset($_POST['refresh_quiz'])) {
     unset($_SESSION['quiz'][$pdf_id]);
     header("Location: quiz.php?pdf_id=" . urlencode($pdf_id));
