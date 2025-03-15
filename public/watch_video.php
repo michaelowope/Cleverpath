@@ -16,7 +16,7 @@ if (isset($_GET['get_id'])) {
     $get_id = $_GET['get_id'];
 } else {
     $get_id = '';
-    header('location:home.php');
+    header('location:index.php');
     exit;
 }
 

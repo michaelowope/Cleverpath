@@ -15,7 +15,7 @@ if (isset($message) && is_array($message)) {
 
    <section class="flex">
 
-      <a href="home.php" class="logo"><img src="/images/full-logo-black.svg" alt="Logo"></a>
+      <a href="index.php" class="logo"><img src="/images/full-logo-black.svg" alt="Logo"></a>
 
       <form action="search_course.php" method="post" class="search-form">
          <input type="text" name="search_course" placeholder="search courses..." required maxlength="100">
