@@ -22,7 +22,8 @@
         "vlucas/phpdotenv": "^5.6",
         "spatie/pdf-to-text": "^1.54",
         "smalot/pdfparser": "^2.11",
-        "guzzlehttp/guzzle": "^7.9"
+        "guzzlehttp/guzzle": "^7.9",
+        "monolog/monolog": "^3.8"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.72"
