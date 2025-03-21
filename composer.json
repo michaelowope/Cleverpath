@@ -3,7 +3,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Micha\\Cleverpath\\": "src/"
+            "Micha\\Cleverpath\\": "public/"
         }
     },
     "authors": [
@@ -12,20 +12,18 @@
             "email": "michaelowope@gmail.com"
         }
     ],
+    "config": {
+        "process-timeout": 0
+    },
     "scripts": {
-        "start": "php -S localhost:3000 -t public",
-        "start-websocket": "php app/web_server.php",
-        "format": "set PHP_CS_FIXER_IGNORE_ENV=1 && php-cs-fixer fix --allow-risky=yes"
+        "start": "php -d upload_max_filesize=15M -d post_max_size=15M -S localhost:3000 -t public",
+        "start-websocket": "php app/web_server.php"
     },
     "require": {
         "cboden/ratchet": "^0.4.4",
         "vlucas/phpdotenv": "^5.6",
-        "spatie/pdf-to-text": "^1.54",
         "smalot/pdfparser": "^2.11",
         "guzzlehttp/guzzle": "^7.9",
         "monolog/monolog": "^3.8"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.72"
     }
 }

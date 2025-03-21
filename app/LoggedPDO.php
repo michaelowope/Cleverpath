@@ -2,24 +2,23 @@
 namespace App;
 
 use PDO;
-use PDOException;
+use PDOStatement;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 class LoggedPDO extends PDO
 {
-    private $logger;
+    private ?Logger $logger;
 
-    // Add an extra parameter ($logger) to accept a Monolog instance
-    public function __construct($dsn, $username = null, $password = null, $options = [], Logger $logger = null)
+    // Accept a Monolog instance (explicitly nullable)
+    public function __construct($dsn, $username = null, $password = null, $options = [], ?Logger $logger = null)
     {
         parent::__construct($dsn, $username, $password, $options);
-
-        // Store the logger
         $this->logger = $logger;
     }
 
-    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args)
+    // Explicitly declare return type as PDOStatement|false
+    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args): PDOStatement|false
     {
         if ($this->logger) {
             $this->logger->debug("Executing query: " . $statement);
@@ -27,7 +26,8 @@ class LoggedPDO extends PDO
         return parent::query($statement, $mode, ...$fetch_mode_args);
     }
 
-    public function exec($statement)
+    // Explicitly declare return type as int|false
+    public function exec($statement): int|false
     {
         if ($this->logger) {
             $this->logger->debug("Executing exec: " . $statement);
@@ -35,7 +35,8 @@ class LoggedPDO extends PDO
         return parent::exec($statement);
     }
 
-    public function prepare($statement, $options = [])
+    // Explicitly declare return type as PDOStatement|false
+    public function prepare($statement, $options = []): PDOStatement|false
     {
         if ($this->logger) {
             $this->logger->debug("Preparing query: " . $statement);

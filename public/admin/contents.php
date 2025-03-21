@@ -57,9 +57,9 @@ if (isset($_POST['delete_video'])) {
 <?php include '../components/admin_header.php'; ?>
 
 <section class="contents">
-<div class="back-btn-container">
+<!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> -->
    <h1 class="heading">Your Contents</h1>
    <div class="box-container">
       <div class="box" style="text-align: center;">

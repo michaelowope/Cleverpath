@@ -153,9 +153,9 @@ $select_users->execute($params);
 <?php include 'components/user_header.php'; ?>
 
 <section class="friends-container">
-    <div class="back-btn-container">
+    <!-- <!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> --> -->
     <h1 class="heading"><i class="fas fa-user-friends"></i> Add Friends</h1>
 
     <?php if (!empty($message)): ?>

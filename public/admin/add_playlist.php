@@ -56,9 +56,9 @@ if (isset($_POST['submit'])) {
 <?php include '../components/admin_header.php'; ?>
    
 <section class="playlist-form">
-   <div class="back-btn-container">
+   <!-- <!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> --> -->
    <h1 class="heading">create playlist</h1>
 
    <form action="" method="post" enctype="multipart/form-data">
@@ -78,10 +78,6 @@ if (isset($_POST['submit'])) {
    </form>
 
 </section>
-
-
-
-index
 
 
 

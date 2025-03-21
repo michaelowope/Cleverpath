@@ -32,9 +32,9 @@ if (isset($_COOKIE['user_id'])) {
 
 <section class="courses">
 
-    <div class="back-btn-container">
+    <!-- <!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> --> -->
 
    <h1 class="heading">bookmarked playlists</h1>
 

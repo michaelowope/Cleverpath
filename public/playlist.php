@@ -57,9 +57,9 @@ if (isset($_POST['save_list'])) {
 
 <!-- Playlist Section -->
 <section class="playlist">
-   <div class="back-btn-container">
+   <!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> -->
    <h1 class="heading">Playlist Details</h1>
    <div class="row">
 

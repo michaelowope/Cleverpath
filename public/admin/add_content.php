@@ -3,7 +3,7 @@
 include '../../config/connect.php';
 
 // Always initialize $message as an array so it's iterable
-$message = [];
+$messages = [];
 
 // Check for a valid tutor cookie, otherwise redirect
 if (isset($_COOKIE['tutor_id'])) {
@@ -17,8 +17,7 @@ if (isset($_COOKIE['tutor_id'])) {
 // Handle form submission
 if (isset($_POST['submit'])) {
 
-    // Example limit of 8MB (adjust as needed)
-    $maxSize = 8 * 1024 * 1024; // 8 MB
+    $maxSize = 15 * 1024 * 1024; // 15 MB
 
     // Collect form data
     $id          = unique_id();
@@ -32,14 +31,14 @@ if (isset($_POST['submit'])) {
     $file          = $_FILES['file']['name'];
     $file          = filter_var($file, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $file_ext      = pathinfo($file, PATHINFO_EXTENSION);
-    $rename_file   = unique_id() . '.' . $file_ext;
+    $rename_file   = unique_id().'.'. $file_ext;
+    $file_size     = $_FILES['file']['size'];
     $file_tmp_name = $_FILES['file']['tmp_name'];
     $file_folder   = '../uploads/' . $rename_file;
-    $file_size     = $_FILES['file']['size'];
 
     // Check if file size exceeds limit
     if ($file_size > $maxSize) {
-        $message[] = 'Your file is too large. The maximum file size allowed is 8MB.';
+        $message[] = 'Your file is too large. The maximum file size allowed is 15MB.';
     } else {
         // Insert data into database and move file to uploads folder
         $add_playlist = $conn->prepare("INSERT INTO `content` (id, tutor_id, playlist_id, title, description, file, status, level)
@@ -82,17 +81,17 @@ if (isset($_POST['submit'])) {
 
 <?php
 // Display any messages
-if (!empty($message)) {
-    foreach ($message as $msg) {
+if (!empty($messages)) {
+    foreach ($messages as $msg) {
         echo '<div class="message">' . $msg . '</div>';
     }
 }
 ?>
 
 <section class="video-form">
-    <div class="back-btn-container">
+    <!-- <!-- <div class="back-btn-container">
        <button onclick='window.history.back()' class="btn"><i class="fa-solid fa-arrow-left"></i>Go back</a>
-   </div>
+   </div> --> -->
 
    <h1 class="heading">upload content</h1>
 
@@ -133,7 +132,7 @@ if (!empty($message)) {
          ?>
       </select>
       <p>select file <span>*</span></p>
-      <input type="file" name="file" accept="video/*,.pdf" required class="box">
+      <input type="file" name="file" accept="video/*,.pdf" required class="box" >
       <input type="submit" value="Upload Content" name="submit" class="btn">
    </form>
 </section>
