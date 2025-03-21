@@ -13,7 +13,6 @@ dist-ssr
 *.local
 vendor
 .env
-uploads/* !.gitkeep
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -26,9 +25,5 @@ uploads/* !.gitkeep
 *.sw?
 
 /vendor/
+uploads/
 .gitignore
-public/uploads/5f8oh6IRjfPtqb1YbivQ.jpg
-public/uploads/67dca7d33ae9b.pdf
-public/uploads/sDIzRpiW7lf3tVVvWwmg.pdf
-public/uploads/sKri1arGo9up2Z2PXS2p.pdf
-public/uploads/VehxvUkQwGAGZ7DUesfY.jpg
