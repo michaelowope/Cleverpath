@@ -16,8 +16,10 @@
         "process-timeout": 0
     },
     "scripts": {
-        "start": "php -d upload_max_filesize=15M -d post_max_size=15M -S localhost:3000 -t public",
-        "start-websocket": "php app/web_server.php"
+        "setup": "composer install && npm install",
+        "start:php": "php -d upload_max_filesize=15M -d post_max_size=15M -S localhost:3000 -t public && php app/web_server.php",
+        "start:websocket": "php app/web_server.php",
+        "dev": "concurrently \"composer start:php\" \"composer start:websocket\""
     },
     "require": {
         "cboden/ratchet": "^0.4.4",
