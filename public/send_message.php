@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'file' => $file_name
         ]);
 
-        $ws = @stream_socket_client("tcp://localhost:3000", $errno, $errstr, 30);
+        $ws = @stream_socket_client("tcp://localhost:3010", $errno, $errstr, 30);
         if ($ws) {
             fwrite($ws, $ws_data);
             fclose($ws);
