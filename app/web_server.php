@@ -61,8 +61,8 @@ $server = IoServer::factory(
             new ChatServer()
         )
     ),
-    8080 // WebSocket port
+    3010 // WebSocket port
 );
 
-echo "WebSocket server started on ws://localhost:8080\n";
+echo "WebSocket server started on ws://localhost:3010\n";
 $server->run();

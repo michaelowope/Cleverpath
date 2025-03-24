@@ -65,7 +65,7 @@ if (!$friend) {
 <script src="js/script.js"></script>
 
 <script>
-    const ws = new WebSocket("ws://localhost:8080");
+    const ws = new WebSocket("ws://localhost:3010");
 
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
